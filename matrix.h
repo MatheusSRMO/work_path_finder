@@ -21,5 +21,7 @@ Matrix* matrix_sum(Matrix* m1, Matrix* m2);
 Matrix* matrix_multiply_by_a_scalar(Matrix* matrix, data_type scalar);
 Matrix* matrix_multiply(Matrix* m1, Matrix* m2);
 Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2);
+void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2);
+void matrix_swap_columns(Matrix* matrix, int column_index_index_1, int column_index_index_2);
 
 #endif  // MATRIX_H_

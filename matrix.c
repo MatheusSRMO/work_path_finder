@@ -203,3 +203,46 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
     }
     return result;
 }
+
+
+void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
+    row_index_1 --;
+    row_index_2 --;
+
+    Node* aux = matrix->lines_heads[row_index_1];
+    matrix->lines_heads[row_index_1] = matrix->lines_heads[row_index_2];
+    matrix->lines_heads[row_index_2] = aux;
+    
+    Node* n1 = matrix->lines_heads[row_index_1];
+    Node* n2 = matrix->lines_heads[row_index_2];
+
+    while(n1 != NULL) {
+        n1->i = row_index_1+1;
+        n1 = n1->next_in_line;
+    }
+    while(n2 != NULL) {
+        n2->i = row_index_2+1;
+        n2 = n2->next_in_line;
+    }
+}
+
+void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2) {
+    column_index_1 --;
+    column_index_2 --;
+
+    Node* aux = matrix->columns_heads[column_index_1];
+    matrix->columns_heads[column_index_1] = matrix->columns_heads[column_index_2];
+    matrix->columns_heads[column_index_2] = aux;
+    
+    Node* n1 = matrix->columns_heads[column_index_1];
+    Node* n2 = matrix->columns_heads[column_index_2];
+
+    while(n1 != NULL) {
+        n1->j = column_index_1+1;
+        n1 = n1->next_in_column;
+    }
+    while(n2 != NULL) {
+        n2->j = column_index_2+1;
+        n2 = n2->next_in_column;
+    }
+}

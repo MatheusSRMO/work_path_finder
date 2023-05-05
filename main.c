@@ -9,27 +9,19 @@ void print_int(data_type data) {
 }
 
 int main() {
-    Matrix* matrix = matrix_construct(5, 11);
+    Matrix* matrix = matrix_construct(3, 3);
 
-    matrix_assign_value(matrix, 1, 4, 8);
-    matrix_assign_value(matrix, 2, 8, 3);
-    matrix_assign_value(matrix, 1, 8, 3);
-    matrix_assign_value(matrix, 5, 4, 8);
-    matrix_assign_value(matrix, 5, 8, 0);
-    matrix_assign_value(matrix, 5, 8, 1);
+    matrix_assign_value(matrix, 1, 3, 8);
+    matrix_assign_value(matrix, 2, 2, 3);
+    matrix_assign_value(matrix, 1, 1, 2);
+
+    matrix_swap_rows(matrix, 1, 2);
+    matrix_swap_columns(matrix, 1, 3);
 
     matrix_show(matrix, print_int);
     printf("\n");
 
-    Matrix* res = matrix_multiply_by_a_scalar(matrix, 2);
-    matrix_show(res, print_int);
-    printf("\n");
 
-    Matrix* res2 = matrix_sum(matrix, res);
-    matrix_show(res2, print_int);
-
-    matrix_destroy(res);
-    matrix_destroy(res2);
     matrix_destroy(matrix);
     return 0;
 }
