@@ -20,5 +20,6 @@ void matrix_show(Matrix* matrix, void (*print)(data_type));
 Matrix* matrix_sum(Matrix* m1, Matrix* m2);
 Matrix* matrix_multiply_by_a_scalar(Matrix* matrix, data_type scalar);
 Matrix* matrix_multiply(Matrix* m1, Matrix* m2);
+Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2);
 
 #endif  // MATRIX_H_

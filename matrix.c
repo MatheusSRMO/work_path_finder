@@ -171,9 +171,35 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
         exit(printf("Não é possivel multiplicar A%dx%d por B%dx%d\n", m1->m, m1->n, m2->m, m2->n));
 
     Matrix* result = matrix_construct(m1->m, m2->n);
-    for(int i = 0; i < result->m; i++) {
-        for(int j = 0; i < result->n; j++) {
-            
+    for(int i = 1; i <= result->m; i++) {
+        for(int j = 1; i <= result->n; j++) {
+            data_type in = 0;
+            for(int k = 1; k <= result->n; k++) {
+                data_type v1 = matrix_get_value(m1, i, k);
+                data_type v2 = matrix_get_value(m2, j, k);
+                in += v1*v2;
+            }
+            if(in != 0) {
+                matrix_assign_value(result, i, j, in);
+            }
         }
     }
+    return result;
+}
+
+Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
+    if(m1->m != m2->m || m1->n != m2->n)
+        exit(printf("Não é possivel multiplicar ponto a ponto A%dx%d por B%dx%d\n", m1->m, m1->n, m2->m, m2->n));
+
+    Matrix* result = matrix_construct(m1->m, m2->n);
+    for(int i = 1; i <= result->m; i++) {
+        for(int j = 1; i <= result->n; j++) {
+            data_type v1 = matrix_get_value(m1, i, j);
+            data_type v2 = matrix_get_value(m2, j, j);
+            if(v1 != 0 && v2 != 0) {
+                matrix_assign_value(result, i, j, v1*v2);
+            }
+        }
+    }
+    return result;
 }
