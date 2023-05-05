@@ -206,6 +206,9 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
 
 
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
+    if(row_index_1 < matrix->m || row_index_2 < matrix->m ||)
+        exit(printf("\n"));
+    
     row_index_1 --;
     row_index_2 --;
 
@@ -244,5 +247,13 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
     while(n2 != NULL) {
         n2->j = column_index_2+1;
         n2 = n2->next_in_column;
+    }
+}
+
+Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
+    int m = matrix->m;
+    int n = matrix->n;
+    if(x1 < m || x1 > m || x2 < m || x2 > m || y1 < m || y1 > m || y2 < m || y2 > m) {
+        exit(printf("\n"));
     }
 }

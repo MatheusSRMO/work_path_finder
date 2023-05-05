@@ -23,5 +23,6 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2);
 Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2);
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2);
 void matrix_swap_columns(Matrix* matrix, int column_index_index_1, int column_index_index_2);
+Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2);
 
 #endif  // MATRIX_H_
