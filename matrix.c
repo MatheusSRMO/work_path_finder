@@ -206,8 +206,8 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
 
 
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
-    if(row_index_1 < matrix->m || row_index_2 < matrix->m ||)
-        exit(printf("\n"));
+    if(row_index_1 < 1 || row_index_2 < 1 || row_index_1 > matrix->m || row_index_2 > matrix->m)
+        exit(printf("Não é possível trocar linhas pois os indices não existem na matriz!\n"));
     
     row_index_1 --;
     row_index_2 --;
@@ -253,7 +253,17 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
     int m = matrix->m;
     int n = matrix->n;
-    if(x1 < m || x1 > m || x2 < m || x2 > m || y1 < m || y1 > m || y2 < m || y2 > m) {
-        exit(printf("\n"));
+    if(x1 < 1 || x1 > m || x2 < 1 || x2 > m || y1 < 1 || y1 > n || y2 < 1 || y2 > n) {
+        exit(printf("Não é possível obter submatriz com as cordenadas fornecidas!\n"));
     }
+    Matrix* result = matrix_construct(y2-y1+1, x2-x1+1);
+
+    for(int i = y1, k = 1; i <= y2; i++, k++) 
+        for(int j = x1, a = 1; j <= x2; j++, a++) {
+            data_type cel = matrix_get_value(matrix, i, j);
+            if(cel != STANDARD_VALUE) 
+                matrix_assign_value(result, k, a, cel);
+        }
+    
+    return result;
 }
