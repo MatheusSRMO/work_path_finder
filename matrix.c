@@ -1,6 +1,7 @@
 #include "matrix.h"
 #define STANDARD_VALUE 0
 
+// Complexidade: O(m+n)
 Matrix* matrix_construct(int m, int n) {
     Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
     matrix->m = m;
@@ -16,6 +17,7 @@ Matrix* matrix_construct(int m, int n) {
     return matrix;
 }
 
+// Complexidade: O(m*n)
 void matrix_destroy(Matrix* matrix) {
     for(int i = 0; i < matrix->m; i++) {
         Node* node = matrix->lines_heads[i];
@@ -30,77 +32,67 @@ void matrix_destroy(Matrix* matrix) {
     free(matrix);
 }
 
+// Complexidade: O(m+n) no pior dos casos
 void matrix_assign_value(Matrix* matrix, int i, int j, data_type value) {
-    // Verifica se 0 <= i-1 < m e 0 <= j-1 < n
-    if (i-1 < 0 || i-1 >= matrix->m || j-1 < 0 || j-1 >= matrix->n) {
+    //Verifica se 0 < i < m e 0 < j < n
+    if (i < 0 || i >= matrix->m || j < 0 || j >= matrix->n) {
         exit(printf("Valores ij invalidos!!\n"));
     }
 
-    Node* line = matrix->lines_heads[i-1];
-    Node* column = matrix->columns_heads[j-1];
+    Node* line = matrix->lines_heads[i];
+    Node* prev_line = line;
+    Node* column = matrix->columns_heads[j];
+    Node* prev_column = column;
 
     if (line == NULL || column == NULL) {
         Node* new_node = node_construct(i, j, value, line, column);
-        matrix->lines_heads[i-1] = matrix->columns_heads[j-1] = new_node;
-    } 
-    else {
-        while (line->j < j && line->next_in_line != NULL) {
-            line = line->next_in_line;
-        }
-        while (column->i < i && column->next_in_column != NULL) {
-            column = column->next_in_column;
-        }
-        if (line->j == j && column->i == i) {
-            if(value == STANDARD_VALUE) {
-                
-                if(line == matrix->lines_heads[i-1]) {
-                    matrix->lines_heads[i-1] = line->next_in_line;
-                }
-                else {
-                    Node* prev = matrix->lines_heads[i-1];
-                    while(prev->next_in_line != line) {
-                        prev = prev->next_in_line;
-                    }
-                    prev->next_in_line = line->next_in_line;
-                }
-
-                if(column == matrix->columns_heads[j-1]) {
-                    matrix->columns_heads[j-1] = column->next_in_column;
-                }
-                else {
-                    Node* prev = matrix->columns_heads[j-1];
-                    while(prev->next_in_column != column) {
-                        prev = prev->next_in_column;
-                    }
-                    prev->next_in_column = column->next_in_column;
-                }
-
-                node_destroy(line);
-            }
-            else {
-                line->data = value;
-            }
-
-        } 
-        else if(value != STANDARD_VALUE) {
-            Node* new_node = node_construct(i, j, value, line->next_in_line, column->next_in_column);
-            line->next_in_line = column->next_in_column = new_node;
-        }
+        matrix->lines_heads[i] = matrix->columns_heads[j] = new_node;
+        return;
     }
+    while (line->j != j && line->next_in_line != NULL) {
+        prev_line = line;
+        line = line->next_in_line;
+    }
+    while (column->i != i && column->next_in_column != NULL) {
+        prev_column = column;
+        column = column->next_in_column;
+    }
+
+    if(line->j == j && column->i == i) {
+        if(value != STANDARD_VALUE) {
+            line->data = value;
+            return;
+        }
+        if(line == matrix->lines_heads[i]) 
+            matrix->lines_heads[i] = line->next_in_line;
+        else
+            prev_line->next_in_line = line->next_in_line;
+        
+        if(column == matrix->columns_heads[j])
+            matrix->columns_heads[j] = column->next_in_column;
+        else
+            prev_column->next_in_column = column->next_in_column;
+        
+        node_destroy(line);
+        return;
+    }
+    if(value == STANDARD_VALUE) return;
+    
+    Node* new_node = node_construct(i, j, value, line->next_in_line, column->next_in_column);
+    line->next_in_line = column->next_in_column = new_node;
 }
 
 void matrix_remove_value(Matrix* matrix, int i, int j) {
     matrix_assign_value(matrix, i, j, STANDARD_VALUE);
 }
 
-
 data_type matrix_get_value(Matrix* matrix, int i, int j) {
-    if(!(i-1 < matrix->m && i-1 >= 0) || !(j-1 < matrix->n && j-1 >= 0)) {
+    if(!(i < matrix->m && i >= 0) || !(j < matrix->n && j >= 0)) {
         exit(printf("Valores ij invalidos!!\n"));
     }
     data_type value = STANDARD_VALUE;
     if(i <= j) {
-        Node* n = matrix->columns_heads[j-1];
+        Node* n = matrix->columns_heads[j];
         while(n != NULL) {
             if(n->i == i) {
                 value = n->data;
@@ -110,7 +102,7 @@ data_type matrix_get_value(Matrix* matrix, int i, int j) {
         }
     }
     else {
-        Node* n = matrix->lines_heads[i-1];
+        Node* n = matrix->lines_heads[i];
         while(n != NULL) {
             if(n->j == j) {
                 value = n->data;
@@ -123,12 +115,29 @@ data_type matrix_get_value(Matrix* matrix, int i, int j) {
     return value;
 }
 
-void matrix_show(Matrix* matrix, void (*print)(data_type)) {
-    for(int i = 1; i <= matrix->m; i++) {
-        for(int j = 1; j <= matrix->n; j++) {
+void matrix_show_dense(Matrix* matrix, void (*print)(data_type)) {
+    for(int i = 0; i < matrix->m; i++) {
+        for(int j = 0; j < matrix->n; j++) {
             data_type val = matrix_get_value(matrix, i, j);
             print(val);
             printf(" ");
+        }
+        printf("\n");
+    }
+}
+
+void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
+    for(int i = 0; i < matrix->m; i++) {
+        Node* node = matrix->lines_heads[i];
+        while(node != NULL) {
+            printf("(");
+            print(node->i);
+            printf(", ");
+            print(node->j);
+            printf(") -> ");
+            print(node->data);
+            printf("\n");
+            node = node->next_in_line;
         }
         printf("\n");
     }
@@ -140,8 +149,8 @@ Matrix* matrix_sum(Matrix* m1, Matrix* m2) {
 
     Matrix* result = matrix_construct(m1->m, m1->n);
 
-    for(int i = 1; i <= result->m; i++) {
-        for(int j = 1; j <= result->n; j++) {
+    for(int i = 0; i < result->m; i++) {
+        for(int j = 0; j < result->n; j++) {
             data_type v1 = matrix_get_value(m1, i, j);
             data_type v2 = matrix_get_value(m2, i, j);
             if(v1 != 0 || v2 != 0) 
@@ -171,12 +180,12 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
         exit(printf("Não é possivel multiplicar A%dx%d por B%dx%d\n", m1->m, m1->n, m2->m, m2->n));
 
     Matrix* result = matrix_construct(m1->m, m2->n);
-    for(int i = 1; i <= result->m; i++) {
-        for(int j = 1; i <= result->n; j++) {
+    for(int i = 0; i < result->m; i++) {
+        for(int j = 0; i < result->n; j++) {
             data_type in = 0;
             for(int k = 1; k <= result->n; k++) {
                 data_type v1 = matrix_get_value(m1, i, k);
-                data_type v2 = matrix_get_value(m2, j, k);
+                data_type v2 = matrix_get_value(m2, k, j);
                 in += v1*v2;
             }
             if(in != 0) {
@@ -206,7 +215,7 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
 
 
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
-    if(row_index_1 < 1 || row_index_2 < 1 || row_index_1 > matrix->m || row_index_2 > matrix->m)
+    if(row_index_1 < 0 || row_index_2 < 0 || row_index_1 >= matrix->m || row_index_2 >= matrix->m)
         exit(printf("Não é possível trocar linhas pois os indices não existem na matriz!\n"));
     
     row_index_1 --;
@@ -220,11 +229,11 @@ void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
     Node* n2 = matrix->lines_heads[row_index_2];
 
     while(n1 != NULL) {
-        n1->i = row_index_1+1;
+        n1->i = row_index_1;
         n1 = n1->next_in_line;
     }
     while(n2 != NULL) {
-        n2->i = row_index_2+1;
+        n2->i = row_index_2;
         n2 = n2->next_in_line;
     }
 }
@@ -241,11 +250,11 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
     Node* n2 = matrix->columns_heads[column_index_2];
 
     while(n1 != NULL) {
-        n1->j = column_index_1+1;
+        n1->j = column_index_1;
         n1 = n1->next_in_column;
     }
     while(n2 != NULL) {
-        n2->j = column_index_2+1;
+        n2->j = column_index_2;
         n2 = n2->next_in_column;
     }
 }
@@ -253,7 +262,7 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
     int m = matrix->m;
     int n = matrix->n;
-    if(x1 < 1 || x1 > m || x2 < 1 || x2 > m || y1 < 1 || y1 > n || y2 < 1 || y2 > n) {
+    if(x1 < 0 || x1 >= m || x2 < 0 || x2 >= m || y1 < 0 || y1 >= n || y2 < 0 || y2 >= n) {
         exit(printf("Não é possível obter submatriz com as cordenadas fornecidas!\n"));
     }
     Matrix* result = matrix_construct(y2-y1+1, x2-x1+1);
@@ -265,5 +274,19 @@ Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
                 matrix_assign_value(result, k, a, cel);
         }
     
+    return result;
+}
+
+Matrix* matrix_transpose(Matrix* matrix) {
+    Matrix* result = matrix_construct(matrix->n, matrix->m);
+
+    for(int i = 1; i <= matrix->m; i++) {
+        for(int j = 1; j <= matrix->n; j++) {
+            data_type cel = matrix_get_value(matrix, i, j);
+            if(cel != STANDARD_VALUE) 
+                matrix_assign_value(result, j, i, cel);
+        }
+    }
+
     return result;
 }
