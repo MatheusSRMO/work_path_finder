@@ -34,58 +34,44 @@ void matrix_destroy(Matrix* matrix) {
 
 // Complexidade: O(m+n) no pior dos casos
 void matrix_assign_value(Matrix* matrix, int i, int j, data_type value) {
-    //Verifica se 0 < i < m e 0 < j < n
+    // Verificar se 0 < i < m e 0 < j < n
     if (i < 0 || i >= matrix->m || j < 0 || j >= matrix->n) {
-        exit(printf("Valores ij invalidos!!\n"));
-    }
-
-    Node* line = matrix->lines_heads[i];
-    Node* prev_line = line;
-    Node* column = matrix->columns_heads[j];
-    Node* prev_column = column;
-
-    if (line == NULL || column == NULL) {
-        Node* new_node = node_construct(i, j, value, line, column);
-        matrix->lines_heads[i] = matrix->columns_heads[j] = new_node;
+        printf("Valores ij inválidos!!\n");
         return;
     }
-    while (line->j != j && line->next_in_line != NULL) {
-        prev_line = line;
-        line = line->next_in_line;
-    }
-    while (column->i != i && column->next_in_column != NULL) {
-        prev_column = column;
-        column = column->next_in_column;
+
+    Node** line = &(matrix->lines_heads[i]);
+    Node** column = &(matrix->columns_heads[j]);
+
+    while (*line != NULL && (*line)->j < j) {
+        line = &((*line)->next_in_line);
     }
 
-    if(line->j == j && column->i == i) {
-        if(value != STANDARD_VALUE) {
-            line->data = value;
+    while (*column != NULL && (*column)->i < i) {
+        column = &((*column)->next_in_column);
+    }
+
+    if (*line != NULL && (*line)->j == j && (*line)->i == i) {
+        if (value == STANDARD_VALUE) {
+            Node* node_to_remove = *line;
+            *line = (*line)->next_in_line;
+            *column = (*column)->next_in_column;
+            node_destroy(node_to_remove);
             return;
         }
-        if(line == matrix->lines_heads[i]) 
-            matrix->lines_heads[i] = line->next_in_line;
-        else
-            prev_line->next_in_line = line->next_in_line;
-        
-        if(column == matrix->columns_heads[j])
-            matrix->columns_heads[j] = column->next_in_column;
-        else
-            prev_column->next_in_column = column->next_in_column;
-        
-        node_destroy(line);
+        (*line)->data = value;
         return;
     }
-    if(value == STANDARD_VALUE) return;
-    
-    Node* new_node = node_construct(i, j, value, line->next_in_line, column->next_in_column);
-    line->next_in_line = column->next_in_column = new_node;
+    if (value != STANDARD_VALUE) 
+        *line = *column = node_construct(i, j, value, *line, *column);
 }
+
 
 void matrix_remove_value(Matrix* matrix, int i, int j) {
     matrix_assign_value(matrix, i, j, STANDARD_VALUE);
 }
 
+// Complexidade: O(min(m, n))
 data_type matrix_get_value(Matrix* matrix, int i, int j) {
     if(!(i < matrix->m && i >= 0) || !(j < matrix->n && j >= 0)) {
         exit(printf("Valores ij invalidos!!\n"));
@@ -144,17 +130,39 @@ void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
 }
 
 Matrix* matrix_sum(Matrix* m1, Matrix* m2) {
-    if((m1->m != m2->m) || (m1->n != m2->n))
-        exit(printf("Não é possível realizar soma de matrizes com tamanho diferentes\n"));
+    if (m1->m != m2->m || m1->n != m2->n) {
+        exit(printf("Não é possível realizar soma de matrizes com tamanhos diferentes\n"));
+    }
 
     Matrix* result = matrix_construct(m1->m, m1->n);
 
-    for(int i = 0; i < result->m; i++) {
-        for(int j = 0; j < result->n; j++) {
-            data_type v1 = matrix_get_value(m1, i, j);
-            data_type v2 = matrix_get_value(m2, i, j);
-            if(v1 != 0 || v2 != 0) 
-                matrix_assign_value(result, i, j, v1+v2);
+    for (int i = 0; i < m1->m; i++) {
+        Node* node1 = m1->lines_heads[i];
+        Node* node2 = m2->lines_heads[i];
+
+        while (node1 != NULL || node2 != NULL) {
+            if (node1 != NULL && node2 != NULL && node1->j == node2->j) {
+                // Elemento presente em ambas as matrizes
+                data_type sum = node1->data + node2->data;
+                
+                if(sum != 0)
+                    matrix_assign_value(result, i, node1->j, sum);
+                
+                node1 = node1->next_in_line;
+                node2 = node2->next_in_line;
+            }
+            else if (node1 != NULL && (node2 == NULL || node1->j < node2->j)) {
+                // Elemento presente apenas em m1
+                matrix_assign_value(result, i, node1->j, node1->data);
+                
+                node1 = node1->next_in_line;
+            }
+            else {
+                // Elemento presente apenas em m2
+                matrix_assign_value(result, i, node2->j, node2->data);
+                
+                node2 = node2->next_in_line;
+            }
         }
     }
 
@@ -183,33 +191,50 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
     for(int i = 0; i < result->m; i++) {
         for(int j = 0; i < result->n; j++) {
             data_type in = 0;
-            for(int k = 1; k <= result->n; k++) {
+            for(int k = 0; k < result->n; k++) {
                 data_type v1 = matrix_get_value(m1, i, k);
                 data_type v2 = matrix_get_value(m2, k, j);
                 in += v1*v2;
             }
-            if(in != 0) {
-                matrix_assign_value(result, i, j, in);
-            }
+            if(in != 0) matrix_assign_value(result, i, j, in);
         }
     }
     return result;
 }
 
 Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
-    if(m1->m != m2->m || m1->n != m2->n)
-        exit(printf("Não é possivel multiplicar ponto a ponto A%dx%d por B%dx%d\n", m1->m, m1->n, m2->m, m2->n));
+    if (m1->m != m2->m || m1->n != m2->n) {
+        exit(printf("Não é possível realizar soma de matrizes com tamanhos diferentes\n"));
+    }
 
-    Matrix* result = matrix_construct(m1->m, m2->n);
-    for(int i = 1; i <= result->m; i++) {
-        for(int j = 1; i <= result->n; j++) {
-            data_type v1 = matrix_get_value(m1, i, j);
-            data_type v2 = matrix_get_value(m2, j, j);
-            if(v1 != 0 && v2 != 0) {
-                matrix_assign_value(result, i, j, v1*v2);
+    Matrix* result = matrix_construct(m1->m, m1->n);
+
+    for (int i = 0; i < m1->m; i++) {
+        Node* node1 = m1->lines_heads[i];
+        Node* node2 = m2->lines_heads[i];
+
+        while (node1 != NULL || node2 != NULL) {
+            if (node1 != NULL && node2 != NULL && node1->j == node2->j) {
+                // Elemento presente em ambas as matrizes
+                data_type mult = node1->data * node2->data;
+                
+                if(mult != 0)
+                    matrix_assign_value(result, i, node1->j, mult);
+                
+                node1 = node1->next_in_line;
+                node2 = node2->next_in_line;
+            }
+            else if (node1 != NULL && (node2 == NULL || node1->j < node2->j)) {
+                // Elemento presente apenas em m1                
+                node1 = node1->next_in_line;
+            }
+            else {
+                // Elemento presente apenas em m2                
+                node2 = node2->next_in_line;
             }
         }
     }
+
     return result;
 }
 
