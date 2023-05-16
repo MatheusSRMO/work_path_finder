@@ -49,7 +49,7 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2);
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2);
 
 // Troca as posições de duas colunas na matriz
-void matrix_swap_columns(Matrix* matrix, int column_index_index_1, int column_index_index_2);
+void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2);
 
 // Obtém uma submatriz da matriz original com base nos índices especificados
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2);
