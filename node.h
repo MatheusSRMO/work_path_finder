@@ -12,7 +12,10 @@ typedef struct Node {
     struct Node* next_in_column;
 } Node;
 
+// Aloca memória para um nó
 Node* node_construct(int i, int j, data_type data, Node* next_in_line, Node* next_in_column);
+
+// Libera a memória alocada para um nó
 void node_destroy(Node* node);
 
 #endif  // NODE_H_

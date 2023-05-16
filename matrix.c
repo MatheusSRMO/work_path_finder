@@ -329,6 +329,9 @@ data_type matrix_sum_elements(Matrix* matrix) {
 
 // O(matrix->m * matrix->n * kernel->m * kernel->n)
 Matrix* matrix_convolution(Matrix* matrix, Matrix* kernel) {
+    if(kernel->m != kernel->n || kernel->m % 2 == 0) {
+        exit(printf("O kernel deve ser quadrado e impar!\n"));
+    }
     Matrix* output = matrix_construct(matrix->m, matrix->n);
     
     for (int i = 0; i < matrix->m; i++) {
