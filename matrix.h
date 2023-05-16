@@ -26,5 +26,10 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2);
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2);
 void matrix_swap_columns(Matrix* matrix, int column_index_index_1, int column_index_index_2);
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2);
+Matrix* matrix_transpose(Matrix* matrix);
+data_type matrix_sum_elements(Matrix* matrix);
+Matrix* matrix_convolution(Matrix* input, Matrix* kernel);
+void matrix_to_binary_file(Matrix* matrix, const char* filename);
+Matrix* matrix_from_binary_file(const char* filename);
 
 #endif  // MATRIX_H_
