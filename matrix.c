@@ -1,5 +1,5 @@
 #include "matrix.h"
-#define STANDARD_VALUE 0
+
 
 //O(m + n), onde m é o número de linhas e n é o número de colunas da matriz
 Matrix* matrix_construct(int m, int n) {
@@ -286,18 +286,19 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
 
 // O((y2 - y1 + 1) * (x2 - x1 + 1)), onde (x1,y2) é a cordenada do ponto inicial e (x2,y2) do ponto final
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
-    Matrix* result = matrix_construct(y2-y1+1, x2-x1+1);
+    Matrix* result = matrix_construct(y2 - y1 + 1, x2 - x1 + 1);
 
-    for(int i = y1, k = 0; i < y2; i++, k++) {
-        for(int j = x1, a = 0; j < x2; j++, a++) {
+    for (int i = y1, k = 0; i <= y2; i++, k++) {
+        for (int j = x1, a = 0; j <= x2; j++, a++) {
             data_type cel = matrix_get_value(matrix, i, j);
-            if(cel != STANDARD_VALUE) 
+            if (cel != STANDARD_VALUE)
                 matrix_assign_value(result, k, a, cel);
         }
     }
 
     return result;
 }
+
 
 // O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
 Matrix* matrix_transpose(Matrix* matrix) {
@@ -341,7 +342,7 @@ Matrix* matrix_convolution(Matrix* matrix, Matrix* kernel) {
                 x2 = i + kernel->m/2,
                 y2 = j + kernel->n/2;
             
-            Matrix* submatrix = matrix_get_submatrix(matrix, x1, y1, x2, y2);
+            Matrix* submatrix = matrix_get_submatrix(matrix, y1, x1, y2, x2);
             Matrix* result = matrix_pointwise_operation(submatrix, kernel);
             data_type sum = matrix_sum_elements(result);
             matrix_assign_value(output, i, j, sum);

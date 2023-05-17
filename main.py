@@ -56,23 +56,23 @@ kernel = np.array([[1, 1, 1],
                    [1, 0, 1], 
                    [1, 1, 1]])
 
-print(matrix)
+# print(matrix)
 
-# Test matrix sum
-print(sum_matrices(matrix, matrix))
+# print("Test matrix sum")
+# print(sum_matrices(matrix, matrix))
 
-#Test matrix multiplication by scalar
-print(matrix_multiply_by_scalar(matrix, 2))
+# print("Test matrix multiplication by scalar")
+# print(matrix_multiply_by_scalar(matrix, 2))
 
-print(elementwise_multiplication(matrix, matrix))
-
-
-
+# print("Test elementwise_multiplication")
+# print(elementwise_multiplication(matrix, matrix))
 
 
-# Realiza a convolução
+
+
+print("Realiza a convolução")
 result = convolution(matrix, kernel)
 
 # # Imprime o resultado
 # print(kernel)
-# print(result)
+print(result)

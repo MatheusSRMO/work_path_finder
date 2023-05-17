@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "node.h"
 
+#define STANDARD_VALUE 0
+
 typedef struct Matrix {
     int m;
     int n;

@@ -3,7 +3,6 @@
 #include "node.h"
 #include "matrix.h"
 
-
 void print_int(data_type data) {
     printf("%d", data);
 }
