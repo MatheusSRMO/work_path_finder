@@ -192,11 +192,26 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
     for(int i = 0; i < result->m; i++) {
         for(int j = 0; j < result->n; j++) {
             data_type in = 0;
-            for(int k = 0; k < m1->n; k++) {
-                data_type v1 = matrix_get_value(m1, i, k);
-                data_type v2 = matrix_get_value(m2, k, j);
-                in += v1*v2;
+            Node* node1 = m1->lines_heads[i];
+            Node* node2 = m2->columns_heads[j];
+            while (node1 != NULL || node2 != NULL) {
+                if (node1 != NULL && node2 != NULL && node1->j == node2->i) {
+                    // Elemento presente em ambas as matrizes
+                    in += node1->data * node2->data;
+                    
+                    node1 = node1->next_in_line;
+                    node2 = node2->next_in_column;
+                }
+                else if (node1 != NULL && (node2 == NULL || node1->j < node2->i)) {
+                    // Elemento presente apenas em m1                
+                    node1 = node1->next_in_line;
+                }
+                else {
+                    // Elemento presente apenas em m2                
+                    node2 = node2->next_in_column;
+                }
             }
+            
             if(in != 0) matrix_assign_value(result, i, j, in);
         }
     }
@@ -262,6 +277,7 @@ void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
         n2 = n2->next_in_line;
     }
 }
+
 // O(2*n)
 void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2) {
     if(column_index_1 < 0 || column_index_2 < 0 || column_index_1 >= matrix->n || column_index_2 >= matrix->n)
@@ -298,7 +314,6 @@ Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
 
     return result;
 }
-
 
 // O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
 Matrix* matrix_transpose(Matrix* matrix) {
@@ -418,3 +433,10 @@ Matrix* matrix_from_binary_file(const char* filename) {
     
     return matrix;
 }
+
+
+data_type* solve_linear_system(Matrix* matrix) {
+    
+}
+
+

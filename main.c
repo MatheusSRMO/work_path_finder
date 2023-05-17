@@ -8,35 +8,35 @@ void print_int(data_type data) {
 }
 
 int main() {
-    // Test matrix construction
+    // Teste matrix_construct
     Matrix* matrix = matrix_construct(3, 3);
 
-    // Test matrix assignment
+    // Teste matrix_assign_value
+    matrix_assign_value(matrix, 2, 2, 9);
     matrix_assign_value(matrix, 0, 0, 1);
-    matrix_assign_value(matrix, 0, 1, 2);
-    matrix_assign_value(matrix, 0, 2, 3);
+    matrix_assign_value(matrix, 2, 1, 8);
     matrix_assign_value(matrix, 1, 0, 4);
-    matrix_assign_value(matrix, 1, 1, 5);
+    matrix_assign_value(matrix, 0, 1, 2);
     matrix_assign_value(matrix, 1, 2, 6);
     matrix_assign_value(matrix, 2, 0, 7);
-    matrix_assign_value(matrix, 2, 1, 8);
-    matrix_assign_value(matrix, 2, 2, 9);
+    matrix_assign_value(matrix, 0, 2, 3);
+    matrix_assign_value(matrix, 1, 1, 5);
 
-    // Test matrix get value
+    // Teste matrix_show_dense
     printf("\nMatrix elements:\n");
     matrix_show_dense(matrix, print_int);
 
-    // Test matrix sum
+    // Teste matrix_sum
     Matrix* sum_matrix = matrix_sum(matrix, matrix);
     printf("\nSum of matrices:\n");
     matrix_show_dense(sum_matrix, print_int);
 
-    // Test matrix multiplication by scalar
+    // Teste matrix_multiply_by_a_scalar
     Matrix* scalar_matrix = matrix_multiply_by_a_scalar(matrix, 2);
     printf("\nMatrix multiplied by scalar:\n");
     matrix_show_dense(scalar_matrix, print_int);
 
-    // Test matrix multiplication
+    // Teste matrix_multiply
     Matrix* m1 = matrix_construct(2, 3);
     Matrix* m2 = matrix_construct(3, 2);
 
@@ -58,21 +58,21 @@ int main() {
     printf("\nMatrix multiplication:\n");
     matrix_show_dense(multiplication_matrix, print_int);
 
-    // Test matrix pointwise operation
+    // Teste matrix_pointwise_operation
     Matrix* pointwise_matrix = matrix_pointwise_operation(matrix, matrix);
     printf("\nPointwise matrix operation:\n");
     matrix_show_dense(pointwise_matrix, print_int);
 
-    // Test matrix transpose
+    // Teste matrix_transpose
     Matrix* transpose_matrix = matrix_transpose(matrix);
     printf("\nTransposed matrix:\n");
     matrix_show_dense(transpose_matrix, print_int);
 
-    // Test matrix sum elements
+    // Teste matrix_sum_elements
     data_type sum = matrix_sum_elements(matrix);
     printf("\nSum of matrix elements: %d\n", sum);
 
-    // Test matrix convolution
+    // Teste matrix_convolution
     Matrix* kernel = matrix_construct(3, 3);
     matrix_assign_value(kernel, 0, 0, 1);
     matrix_assign_value(kernel, 0, 1, 1);
@@ -83,14 +83,11 @@ int main() {
     matrix_assign_value(kernel, 2, 1, 1);
     matrix_assign_value(kernel, 2, 2, 1);
 
-    printf("\nKernel elements:\n");
-    matrix_show_dense(kernel, print_int);
-
     Matrix* convolution_result = matrix_convolution(matrix, kernel);
     printf("\nConvolution result:\n");
     matrix_show_dense(convolution_result, print_int);
 
-    // Cleanup
+    // Libera espaço na memoria 
     matrix_destroy(matrix);
     matrix_destroy(sum_matrix);
     matrix_destroy(scalar_matrix);

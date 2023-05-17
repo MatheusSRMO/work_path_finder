@@ -71,4 +71,7 @@ void matrix_to_binary_file(Matrix* matrix, const char* filename);
 // Carrega uma matriz de um arquivo binário
 Matrix* matrix_from_binary_file(const char* filename);
 
+// Resolve um sistema linear representado por uma matriz usando a eliminação de Gauss
+data_type* solve_linear_system(Matrix* matrix);
+
 #endif  // MATRIX_H_
