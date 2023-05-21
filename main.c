@@ -27,6 +27,7 @@ int main() {
 
     // Teste matrix_show_dense
     printf("\nMatrix elements:\n");
+    matrix_show_sparce(matrix, print_int);
     matrix_show_dense(matrix, print_int);
 
     // Teste matrix_sum
