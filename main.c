@@ -25,7 +25,7 @@ int main() {
     matrix_assign_value(matrix, 0, 2, 3);
     matrix_assign_value(matrix, 1, 1, 5);
 
-    // Teste matrix_show_dense
+    // Teste matrix_show_dense e matrix_show_sparce
     printf("\nMatrix elements:\n");
     matrix_show_sparce(matrix, print_int);
     matrix_show_dense(matrix, print_int);

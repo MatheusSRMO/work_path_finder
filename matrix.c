@@ -107,7 +107,7 @@ void matrix_show_dense(Matrix* matrix, void (*print)(data_type)) {
         for(int j = 0; j < matrix->n; j++) {
             data_type val = matrix_get_value(matrix, i, j);
             print(val);
-            printf(" ");
+            printf("\t");
         }
         printf("\n");
     }
@@ -124,7 +124,7 @@ void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
             print(node->j);
             printf(") -> ");
             print(node->data);
-            printf("\n");
+            printf("\t");
             node = node->next_in_line;
         }
         printf("\n");
