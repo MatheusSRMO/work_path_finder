@@ -8,6 +8,9 @@ void print_int(data_type data) {
 }
 
 int main() {
+    // Matrix* matrix_txt = matrix_from_txt_file("path/to/file.txt", read_int);
+    // matrix_show_sparce(matrix_txt, print_int);
+
     // Teste matrix_construct
     Matrix* matrix = matrix_construct(3, 3);
 
@@ -87,7 +90,16 @@ int main() {
     printf("\nConvolution result:\n");
     matrix_show_dense(convolution_result, print_int);
 
+    // Teste matrix_to_binary_file
+    matrix_to_binary_file(matrix, "matrix.bin");
+
+    // Teste matrix_from_binary_file
+    Matrix* matrix_from_file = matrix_from_binary_file("matrix.bin");
+    printf("\nMatrix from file:\n");
+    matrix_show_dense(matrix_from_file, print_int);
+
     // Libera espaço na memoria 
+    // matrix_destroy(matrix_txt);
     matrix_destroy(matrix);
     matrix_destroy(sum_matrix);
     matrix_destroy(scalar_matrix);
@@ -98,5 +110,6 @@ int main() {
     matrix_destroy(transpose_matrix);
     matrix_destroy(kernel);
     matrix_destroy(convolution_result);
+    matrix_destroy(matrix_from_file);
     return 0;
 }

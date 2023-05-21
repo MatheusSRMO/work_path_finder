@@ -1,7 +1,7 @@
 #include "matrix.h"
 
 
-//O(m + n), onde m é o número de linhas e n é o número de colunas da matriz
+//O(m + n), onde m é o número de linhas e n é o número de colunas da matriz, pois percorre as cabeças das linhas e colunas
 Matrix* matrix_construct(int m, int n) {
     Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
     matrix->m = m;
@@ -17,7 +17,7 @@ Matrix* matrix_construct(int m, int n) {
     return matrix;
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz, pois, no pior caso, percorre todos os elementos da matriz
 void matrix_destroy(Matrix* matrix) {
     for(int i = 0; i < matrix->m; i++) {
         Node* node = matrix->lines_heads[i];
@@ -32,7 +32,7 @@ void matrix_destroy(Matrix* matrix) {
     free(matrix);
 }
 
-// O(m + n) no pior caso, onde m é o número de linhas e n é o número de colunas da matriz
+// O(m + n) no pior caso, onde m é o número de linhas e n é o número de colunas da matriz, pois, no pior caso, percorre a linha e a coluna do elemento que queremos inserir
 void matrix_assign_value(Matrix* matrix, int i, int j, data_type value) {
     // Verificar se 0 < i < m e 0 < j < n
     if (i < 0 || i >= matrix->m || j < 0 || j >= matrix->n) {
@@ -66,12 +66,12 @@ void matrix_assign_value(Matrix* matrix, int i, int j, data_type value) {
         *line = *column = node_construct(i, j, value, *line, *column);
 }
 
-// O(m + n) no pior caso, onde m é o número de linhas e n é o número de colunas da matriz
+// O(m + n) no pior caso, onde m é o número de linhas e n é o número de colunas da matriz, pois a complexidade de matrix_assign_value é O(m + n)
 void matrix_remove_value(Matrix* matrix, int i, int j) {
     matrix_assign_value(matrix, i, j, STANDARD_VALUE);
 }
 
-// O(min(m, n)), onde m é o número de linhas e n é o número de colunas da matriz
+// O(min(m, n)), onde m é o número de linhas e n é o número de colunas da matriz, pois, no pior caso, percorre a linha ou a coluna do elemento que queremos acessar, dependendo de qual for menor
 data_type matrix_get_value(Matrix* matrix, int i, int j) {
     if(!(i < matrix->m && i >= 0) || !(j < matrix->n && j >= 0)) {
         return 0;
@@ -101,7 +101,7 @@ data_type matrix_get_value(Matrix* matrix, int i, int j) {
     return value;
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(m * n * k), onde m é o número de linhas e n é o número de colunas da matriz e k é a complexidade de matrix_get_value (O(min(m, n))), pois, no pior caso, percorre todos os elementos da matriz
 void matrix_show_dense(Matrix* matrix, void (*print)(data_type)) {
     for(int i = 0; i < matrix->m; i++) {
         for(int j = 0; j < matrix->n; j++) {
@@ -113,7 +113,7 @@ void matrix_show_dense(Matrix* matrix, void (*print)(data_type)) {
     }
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz, pois percorre todos os elementos da matriz
 void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
     for(int i = 0; i < matrix->m; i++) {
         Node* node = matrix->lines_heads[i];
@@ -131,7 +131,7 @@ void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
     }
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas das matrizes sendo somadas
+// O(c + m * n * k), onde c é a complexidade de matrix_construct, m é o número de linhas, n é o número de colunas e k é a complexidade de matrix_assign_value, pois, no pior caso,percorre todos os elementos das matrizes atribuindo os valores
 Matrix* matrix_sum(Matrix* m1, Matrix* m2) {
     if (m1->m != m2->m || m1->n != m2->n) {
         exit(printf("Não é possível realizar soma de matrizes com tamanhos diferentes\n"));
@@ -168,7 +168,7 @@ Matrix* matrix_sum(Matrix* m1, Matrix* m2) {
     return result;
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(c + m * n * a), onde c é a complexidade de matrix_construct, m é o número de linhas, n é o número de colunas da matriz e a é a complexidade de matrix_assign_value, pois, no pior caso, percorre todos os elementos da matriz adicionando um valor
 Matrix* matrix_multiply_by_a_scalar(Matrix* matrix, data_type scalar) {
     Matrix* result = matrix_construct(matrix->m, matrix->n);
 
@@ -183,7 +183,7 @@ Matrix* matrix_multiply_by_a_scalar(Matrix* matrix, data_type scalar) {
     return result;
 }
 
-// O(m * n * k), onde m é o número de linhas da primeira matriz, n é o número de colunas da primeira matriz e k é o número de colunas da segunda matriz
+// O(m * n * k * a), onde m é o número de linhas da primeira matriz, n é o número de colunas da primeira matriz, k é o número de colunas da segunda matriz e a é a complexidade de matrix_assign_value, pois, no pior caso,percorre todos os elementos das matrizes enquanto percorre a linha da primeira matriz e a coluna da segunda matriz
 Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
     if(m1->n != m2->m)
         exit(printf("Não é possivel multiplicar A%dx%d por B%dx%d\n", m1->m, m1->n, m2->m, m2->n));
@@ -218,7 +218,7 @@ Matrix* matrix_multiply(Matrix* m1, Matrix* m2) {
     return result;
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas das matrizes sendo operadas ponto a ponto
+// O(c + m * n * a), onde c é a complexidade de matrix_construct, m é o número de linhas, n é o número de colunas da matriz e a é a complexidade de matrix_assign_value, pois, no pior caso, percorre todos os elementos da matriz adicionando um valor
 Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
     if (m1->m != m2->m || m1->n != m2->n) {
         exit(printf("Não é possível realizar soma de matrizes com tamanhos diferentes\n"));
@@ -255,7 +255,7 @@ Matrix* matrix_pointwise_operation(Matrix* m1, Matrix* m2) {
     return result;
 }
 
-// O(2*m)
+// O(2*n), onde n é o número de colunas da matriz, pois, no pior caso, percorre todos os elementos das linhas
 void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
     if(row_index_1 < 0 || row_index_2 < 0 || row_index_1 >= matrix->m || row_index_2 >= matrix->m)
         exit(printf("Não é possível trocar linhas pois os indices não existem na matriz!\n"));
@@ -278,7 +278,7 @@ void matrix_swap_rows(Matrix* matrix, int row_index_1, int row_index_2) {
     }
 }
 
-// O(2*n)
+// O(2*m), onde m é o número de linhas da matriz, pois, no pior caso,percorre todos os elementos das colunas
 void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2) {
     if(column_index_1 < 0 || column_index_2 < 0 || column_index_1 >= matrix->n || column_index_2 >= matrix->n)
         exit(printf("Não é possível trocar colunas pois os indices não existem na matriz!\n"));
@@ -300,7 +300,7 @@ void matrix_swap_columns(Matrix* matrix, int column_index_1, int column_index_2)
     }
 }
 
-// O((y2 - y1 + 1) * (x2 - x1 + 1)), onde (x1,y2) é a cordenada do ponto inicial e (x2,y2) do ponto final
+// O(c + (y2 - y1 + 1) * (x2 - x1 + 1) * g * a), onde c é a complexidade de matrix_construct (O(m + n)), (x1,y2) é a cordenada do ponto inicial, (x2,y2) do ponto final, g a complexidade de matrix_get_value (O(min(m, n))) e a a complexidade de matrix_assign_value (matrix_assign_value) pois, no pior caso,percorre todos os elementos da submatriz
 Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
     Matrix* result = matrix_construct(y2 - y1 + 1, x2 - x1 + 1);
 
@@ -315,7 +315,7 @@ Matrix* matrix_get_submatrix(Matrix* matrix, int x1, int y1, int x2, int y2) {
     return result;
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(c + m * n * a), onde onde c é a complexidade de matrix_construct (O(m + n)), m é o número de linhas, n é o número de colunas da matriz e a é a complexidade de matrix_assign_value (O(m + n)), pois, no pior caso,percorre todos os elementos da matriz
 Matrix* matrix_transpose(Matrix* matrix) {
     Matrix* result = matrix_construct(matrix->n, matrix->m);
 
@@ -342,11 +342,10 @@ data_type matrix_sum_elements(Matrix* matrix) {
     }
     return res;
 }
-
-// O(matrix->m * matrix->n * kernel->m * kernel->n)
+// O(c + m * n * g * p * s * a * d^2) onde c é a complexidade de matrix_construct (O(m + n)), m é o número de linhas, n é o número de colunas da matriz, g é a complexidade de matrix_get_submatrix (O(m * n)), p é a complexidade de matrix_pointwise_operation (O(m * n)), s é a complexidade de matrix_sum_elements (O(m * n)), a é a complexidade de matrix_assign_value (O(m + n)), d é a complexidade de matrix_destroy (O(m*n)), pois, no pior caso, percorre todos os elementos da matriz, e, para cada elemento, percorre todos os elementos da submatriz, faz uma operação ponto a ponto, soma todos os elementos da matriz resultante e, por fim, atribui o valor na matriz resultante
 Matrix* matrix_convolution(Matrix* matrix, Matrix* kernel) {
-    if(kernel->m != kernel->n || kernel->m % 2 == 0) {
-        exit(printf("O kernel deve ser quadrado e impar!\n"));
+    if(kernel->m % 2 == 0 || kernel->n % 2 == 0) {
+        exit(printf("O kernel deve ser impar!\n"));
     }
     Matrix* output = matrix_construct(matrix->m, matrix->n);
     
@@ -360,7 +359,7 @@ Matrix* matrix_convolution(Matrix* matrix, Matrix* kernel) {
             Matrix* submatrix = matrix_get_submatrix(matrix, y1, x1, y2, x2);
             Matrix* result = matrix_pointwise_operation(submatrix, kernel);
             data_type sum = matrix_sum_elements(result);
-            matrix_assign_value(output, i, j, sum);
+            if (sum != STANDARD_VALUE) matrix_assign_value(output, i, j, sum);
             matrix_destroy(submatrix);
             matrix_destroy(result);
         }
@@ -398,7 +397,7 @@ void matrix_to_binary_file(Matrix* matrix, const char* filename) {
     fclose(file);
 }
 
-// O(m * n), onde m é o número de linhas e n é o número de colunas da matriz
+// O(c + m * n * a) onde c é a complexidade de matrix_construct (O(m + n)), m é o número de linhas, n é o número de colunas da matriz e a é a complexidade de matrix_assign_value (O(m + n)), pois, no pior caso, percorre todos os elementos da matriz, atribuindo o valor de cada um deles
 Matrix* matrix_from_binary_file(const char* filename) {
     FILE* file = fopen(filename, "rb");
     
@@ -434,9 +433,33 @@ Matrix* matrix_from_binary_file(const char* filename) {
     return matrix;
 }
 
+// O(c + m * n * a) onde c é a complexidade de matrix_construct (O(m + n)), m é o número de linhas, n é o número de colunas da matriz e a é a complexidade de matrix_assign_value (O(m + n)), pois, no pior caso, percorre todos os elementos da matriz, atribuindo o valor de cada um deles
+Matrix* matrix_from_txt_file(const char* path, void (*read)(FILE*, data_type*)) {
+    FILE* file = fopen(path, "r");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return NULL;   
+    }
 
-data_type* solve_linear_system(Matrix* matrix) {
-    
+    int lines, columns;
+    fscanf(file, "%d %d", &lines, &columns);
+
+    Matrix* matrix = matrix_construct(lines, columns);
+
+    // Lê os elementos do arquivo e armazena na matriz
+    for (int i = 0; i < lines; i++) {
+        for (int j = 0; j < columns; j++) {
+            data_type value;
+            read(file, &value);
+            if(value != STANDARD_VALUE) matrix_assign_value(matrix, i, j, value);
+        }
+    }
+
+    fclose(file);
+    return matrix;
 }
 
-
+// O(1)
+void read_int(FILE* file, data_type* value) {
+    fscanf(file, "%d", value);
+}
