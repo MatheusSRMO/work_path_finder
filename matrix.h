@@ -77,4 +77,7 @@ Matrix* matrix_from_txt_file(const char* path, void (*read)(FILE*, data_type*));
 // Função para ler um inteiro de um arquivo de texto
 void read_int(FILE* file, data_type* value);
 
+// Função para ler um float de um arquivo de texto
+void read_float(FILE* file, data_type* value);
+
 #endif  // MATRIX_H_

@@ -118,11 +118,7 @@ void matrix_show_sparce(Matrix* matrix, void (*print)(data_type)) {
     for(int i = 0; i < matrix->m; i++) {
         Node* node = matrix->lines_heads[i];
         while(node != NULL) {
-            printf("(");
-            print(node->i);
-            printf(", ");
-            print(node->j);
-            printf(") -> ");
+            printf("(%d, %d) <- ", node->i, node->j);
             print(node->data);
             printf("\t");
             node = node->next_in_line;
@@ -462,4 +458,9 @@ Matrix* matrix_from_txt_file(const char* path, void (*read)(FILE*, data_type*)) 
 // O(1)
 void read_int(FILE* file, data_type* value) {
     fscanf(file, "%d", value);
+}
+
+// O(1)
+void read_float(FILE* file, data_type* value) {
+    fscanf(file, "%f", value);
 }

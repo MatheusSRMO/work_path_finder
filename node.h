@@ -2,7 +2,7 @@
 #define NODE_H_
 #include <stdlib.h>
 
-typedef int data_type;
+typedef float data_type;
 
 typedef struct Node {
     int i;
