@@ -66,7 +66,7 @@ void matrix_assign_value(Matrix* matrix, int i, int j, data_type value) {
         *line = *column = node_construct(i, j, value, *line, *column);
 }
 
-// O(m + n) no pior caso, onde m é o número de linhas e n é o número de colunas da matriz, pois a complexidade de matrix_assign_value é O(m + n)
+// O(i + j) no pior caso, i é a linha do elemento que queremos remover e j é a coluna do elemento que queremos remover, pois, no pior caso, percorre a linha e a coluna do elemento que queremos remover
 void matrix_remove_value(Matrix* matrix, int i, int j) {
     matrix_assign_value(matrix, i, j, STANDARD_VALUE);
 }
