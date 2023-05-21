@@ -95,6 +95,8 @@ int main() {
 
     // Teste matrix_from_binary_file
     Matrix* matrix_from_file = matrix_from_binary_file("matrix.bin");
+    matrix_swap_rows(matrix_from_file, 0, matrix_from_file->m - 1);
+    matrix_swap_columns(matrix_from_file, 0, matrix_from_file->n - 1);
     printf("\nMatrix from file:\n");
     matrix_show_dense(matrix_from_file, print_int);
 
