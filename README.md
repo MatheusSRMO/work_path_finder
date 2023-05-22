@@ -11,4 +11,3 @@ Uma biblioteca em C para trabalhar com matrizes. Ela fornece várias operações
 - Extração de submatrizes
 - Cálculo da soma e convolução de matrizes
 - Salvamento e carregamento de matrizes em arquivos binários
-- Resolução de sistemas lineares usando eliminação de Gauss
