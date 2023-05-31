@@ -1,13 +1,16 @@
 #include "node.h"
 
 struct node {
+    int i, j;
     void* data;
     DataType type;
     struct node* prev;
 };
 
-NodePtr node_create(void* data, DataType type) {
+NodePtr node_create(int i, int j, void* data, DataType type) {
     NodePtr node = malloc(sizeof(struct node));
+    node->i = i;
+    node->j = j;
     node->data = data;
     node->type = type;
     node->prev = NULL;
