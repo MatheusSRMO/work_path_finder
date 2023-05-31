@@ -14,6 +14,10 @@ NodePtr node_create(void* data, DataType type) {
     return node;
 }
 
+void node_set_prev(NodePtr node, NodePtr prev) {
+    node->prev = prev;
+}
+
 void node_destroy(NodePtr node) {
     free(node);
 }

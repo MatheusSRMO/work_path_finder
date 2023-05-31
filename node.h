@@ -18,6 +18,8 @@ typedef struct node* NodePtr;
 
 NodePtr node_create(void* data, DataType type);
 
+void node_set_prev(NodePtr node, NodePtr prev);
+
 void node_destroy(NodePtr node);
 
 #endif // NODE_H
