@@ -1,7 +1,5 @@
 #include "node.h"
 
-
-
 struct node {
     void* data;
     DataType type;
@@ -14,4 +12,8 @@ NodePtr node_create(void* data, DataType type) {
     node->type = type;
     node->prev = NULL;
     return node;
+}
+
+void node_destroy(NodePtr node) {
+    free(node);
 }

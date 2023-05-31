@@ -18,4 +18,6 @@ typedef struct node* NodePtr;
 
 NodePtr node_create(void* data, DataType type);
 
+void node_destroy(NodePtr node);
+
 #endif // NODE_H
