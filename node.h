@@ -21,7 +21,7 @@ typedef struct node* NodePtr;
 /// @param data void pointer to data
 /// @param type enum DataType
 /// @return new NodePtr
-NodePtr node_create(void* data, DataType type);
+NodePtr node_create(int i, int j, void* data, DataType type);
 
 /// @brief Get previous node
 /// @param node NodePtr
