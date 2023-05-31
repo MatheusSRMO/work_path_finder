@@ -20,6 +20,8 @@ NodePtr node_create(void* data, DataType type);
 
 void node_set_prev(NodePtr node, NodePtr prev);
 
+NodePtr node_get_prev(NodePtr node);
+
 void node_destroy(NodePtr node);
 
 #endif // NODE_H

@@ -18,6 +18,10 @@ void node_set_prev(NodePtr node, NodePtr prev) {
     node->prev = prev;
 }
 
+NodePtr node_get_prev(NodePtr node) {
+    return node->prev;
+}
+
 void node_destroy(NodePtr node) {
     free(node);
 }
