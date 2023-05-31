@@ -1,17 +1,17 @@
 #include "node.h"
 
-typedef enum {
-    INT,
-    FLOAT,
-    DOUBLE,
-    CHAR,
-    STRING,
-    BOOL
-} DataType;
+
 
 struct node {
     void* data;
     DataType type;
-    struct node * prev;
+    struct node* prev;
 };
 
+NodePtr node_create(void* data, DataType type) {
+    NodePtr node = malloc(sizeof(struct node));
+    node->data = data;
+    node->type = type;
+    node->prev = NULL;
+    return node;
+}
