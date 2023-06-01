@@ -17,6 +17,8 @@
         "node.h": "c",
         "stdlib.h": "c",
         "deque_1d_dynamic.h": "c",
-        "deque_2d.h": "c"
+        "deque_2d.h": "c",
+        "queue.h": "c",
+        "check.h": "c"
     }
 }

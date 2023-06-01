@@ -1,0 +1,4 @@
+libed.a
+libsearch.a
+main
+**/*.o
