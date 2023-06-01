@@ -23,6 +23,10 @@ typedef struct node* NodePtr;
 /// @return new NodePtr
 NodePtr node_create(int i, int j, void* data, DataType type);
 
+/// @brief Show node
+/// @param node 
+void node_show(NodePtr node);
+
 /// @brief Get previous node
 /// @param node NodePtr
 /// @return prev NodePtr
