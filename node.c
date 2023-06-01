@@ -19,7 +19,6 @@ NodePtr node_create(int i, int j, void* data, DataType type) {
 }
 
 void node_show(NodePtr node) {
-    printf("(%d, %d) ", node->i, node->j);
     switch (node->type) {
         case INT:
             printf("%d", *(int*)node->data);

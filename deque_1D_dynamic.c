@@ -108,7 +108,7 @@ void deque_1D_print(Deque_1D_dynamic deque) {
     int j = 0;
     while (j < deque->size) {
         node_show(deque->items[i]);
-        printf("\n");
+        printf(" ");
         i = (i + 1) % deque->capacity;
         j++;
     }
