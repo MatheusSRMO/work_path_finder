@@ -13,6 +13,10 @@
         "vector": "c",
         "string_view": "c",
         "initializer_list": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "node.h": "c",
+        "stdlib.h": "c",
+        "deque_1d_dynamic.h": "c",
+        "deque_2d.h": "c"
     }
 }
