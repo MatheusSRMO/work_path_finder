@@ -23,5 +23,5 @@ void *deque_get(Deque *d, int idx);
 
 // libera o espaco alocado para o deque
 void deque_destroy(Deque *d);
-
+void print_deque(Deque* deque, void (*print)(void*));
 #endif
