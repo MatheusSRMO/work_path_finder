@@ -3,10 +3,12 @@
 #define _HEAP_H_
 
 #include "types.h"
+#include "hash.h"
 
 typedef struct Heap Heap;
 
-Heap *heap_construct(int capacity);
+// a funcao de comparacao para o heap está dentro da hash table
+Heap *heap_construct(HashTable *h);
 void heap_push(Heap *heap, void *data, double priority);
 bool heap_empty(Heap *heap);
 void *heap_max(Heap *heap);

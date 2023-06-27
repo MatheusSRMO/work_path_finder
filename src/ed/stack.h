@@ -3,8 +3,6 @@
 #define _STACK_H_
 
 #include "types.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 typedef struct Stack Stack;
 
