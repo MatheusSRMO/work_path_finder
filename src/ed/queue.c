@@ -1,5 +1,6 @@
 
 #include "queue.h"
+#include <stdlib.h>
 
 struct Queue {
     void **data;

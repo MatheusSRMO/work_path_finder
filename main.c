@@ -1,60 +1,62 @@
-
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "src/search/labirinto.h"
-#include "src/search/algorithms.h"
+#include "src/ed/deque.h"
 
-void print_result(ResultData *result)
+typedef struct
 {
-    if (!result->sucesso)
-    {
-        printf("IMPOSSIVEL\n");
-        return;
-    }
+    int x, y;
+} Celula;
 
-    for (int i = 0; i < result->tamanho_caminho; i++)
-        printf("%d %d\n", result->caminho[i].x, result->caminho[i].y);
-
-    printf("%.2lf\n", result->custo_caminho);
-    printf("%d\n", result->tamanho_caminho);
-    printf("%d\n", result->nos_expandidos);
+Celula *celula_create(int x, int y)
+{
+    Celula *c = malloc(sizeof(Celula));
+    c->x = x;
+    c->y = y;
+    return c;
 }
 
-void mostra_caminho(Labirinto *l, ResultData *result, Celula inicio, Celula fim)
+void celula_free(Celula *c)
 {
-    if (result->sucesso)
-    {
-        for (int i = 0; i < result->tamanho_caminho; i++)
-            labirinto_atribuir(l, result->caminho[i].y, result->caminho[i].x, CAMINHO);
-    }
-
-    labirinto_atribuir(l, inicio.y, inicio.x, INICIO);
-    labirinto_atribuir(l, fim.y, fim.x, FIM);
-    labirinto_print(l);
+    free(c);
 }
 
 int main()
 {
-    char arquivo_labirinto[100];
-    char algoritmo[100];
-    Celula inicio, fim;
-    ResultData result;
-    Labirinto *lab;
+    int i, n, x, y;
+    char cmd[10];
+    Deque *d = deque_create();
 
-    scanf("%s", arquivo_labirinto);
-    scanf("%d %d", &inicio.x, &inicio.y);
-    scanf("%d %d", &fim.x, &fim.y);
-    scanf("\n%s", algoritmo);
+    scanf("%d", &n);
 
-    lab = labirinto_carregar(arquivo_labirinto);
+    for (i = 0; i < n; i++)
+    {
+        scanf("\n%s", cmd);
 
-    result = dummy_search(lab, inicio, fim);
-    print_result(&result);
-    mostra_caminho(lab, &result, inicio, fim);
+        if (!strcmp(cmd, "PUSH_BACK"))
+        {   
+            scanf("%d %d", &x, &y);
+            deque_push_back(d, celula_create(x, y));
+        }
+        else if (!strcmp(cmd, "PUSH_FRONT"))
+        {
+            scanf("%d %d", &x, &y);
+            deque_push_front(d, celula_create(x, y));
+        }
+        else if (!strcmp(cmd, "POP_BACK"))
+        {
+            Celula *c = deque_pop_back(d);
+            printf("%d %d\n", c->x, c->y);
+            celula_free(c);
+        }
+        else if (!strcmp(cmd, "POP_FRONT"))
+        {   
+            Celula *c = deque_pop_front(d);
+            printf("%d %d\n", c->x, c->y);
+            celula_free(c);
+        }
+    }
 
-    labirinto_destruir(lab);
-    if (result.caminho != NULL)
-        free(result.caminho);
-
+    deque_destroy(d);
     return 0;
 }

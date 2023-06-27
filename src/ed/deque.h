@@ -5,7 +5,7 @@
 typedef struct Deque Deque;
 
 // criacao do deque
-Deque *deque_construct(void);
+Deque *deque_create(void);
 
 // funcoes para insercao na direita e esquerda (devem ser feitas em O(1), com eventual realloc)
 void deque_push_back(Deque *d, void *val);

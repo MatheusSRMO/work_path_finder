@@ -6,7 +6,7 @@
             "request": "launch",
             "cwd": ".",
             "program": "${workspaceRoot}/main",
-            "args": [],
+            "args": ["< input_deque"],
             "preLaunchTask": "compilacao",
         }
     ]
