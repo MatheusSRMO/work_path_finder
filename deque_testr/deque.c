@@ -31,6 +31,7 @@ Deque* deque_create(void) {
     return deque;
 }
 
+// adiciona um item no final do deque, 
 void deque_push_back(Deque *d, void *val) {
     if (d->buffer[d->back_map_idx] == NULL) {
         d->buffer[d->back_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
@@ -62,8 +63,6 @@ void deque_push_front(Deque *d, void *val) {
         if (d->front_map_idx < 0) {
             deque_realoc_map(d, d->map_size * 2);
         }
-        
-        d->front_idx = BUFFER_SIZE - 1;
     }
     if (d->buffer[d->front_map_idx] == NULL) {
         d->buffer[d->front_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
@@ -106,8 +105,6 @@ void* deque_pop_back(Deque *d) {
 }
 
 void* deque_pop_front(Deque *d) {
-    printf("front_idx: %d\n", d->front_idx);
-    printf("front_map_idx: %d\n", d->front_map_idx);
     void* val = d->buffer[d->front_map_idx][d->front_idx];
     d->buffer[d->front_map_idx][d->front_idx] = NULL;
     d->front_idx++;
@@ -122,25 +119,12 @@ void print_deque(Deque* deque, void (*print)(void*)) {
     printf("[\n");
     for (int i = 0; i < deque->map_size; i++) {
         printf("\t[");
-        int initial_index = i == deque->front_map_idx ? deque->front_idx : 0;
-        int final_index = i == deque->back_map_idx ? deque->back_idx : BUFFER_SIZE;
-        for(int j = 0; j < initial_index; j++) {
-            printf("NULL");
-            if(j != BUFFER_SIZE - 1)
-                printf(", ");
-        }
-        for(int j = initial_index; j < final_index; j++) {
-            if(deque->buffer[i] != NULL && deque->buffer[i][j] != NULL) {
+        for (int j = 0; j < BUFFER_SIZE; j++) {
+            if (deque->buffer[i] != NULL && deque->buffer[i][j] != NULL) {
                 print(deque->buffer[i][j]);
-            }
-            else {
+            } else {
                 printf("NULL");
             }
-            if(j != BUFFER_SIZE - 1)
-                printf(", ");
-        }
-        for(int j = final_index; j < BUFFER_SIZE; j++) {
-            printf("NULL");
             if(j != BUFFER_SIZE - 1)
                 printf(", ");
         }
@@ -164,7 +148,7 @@ void deque_realoc_map(Deque *d, int new_map_size) {
     data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
     
     // Novos indices
-    int new_front_map_idx = new_map_size / 4;
+    int new_front_map_idx = new_map_size / 4 + 1;
     int new_back_map_idx = new_map_size / 4 + d->map_size;
     
     // Inicializa o novo buffer
@@ -172,15 +156,15 @@ void deque_realoc_map(Deque *d, int new_map_size) {
         new_buffer[i] = NULL;
     }
     // Copia os valores do buffer antigo para o novo
-    int i;
-    for(i = 0; i < d->map_size; i++) {
-        int new_idx = i + new_front_map_idx;
+    int i, j;
+    for(i = d->front_map_idx, j = new_front_map_idx; i < d->map_size; i++, j++) {
+        int new_idx = j;
         new_buffer[new_idx] = d->buffer[i];
     }
 
     free(d->buffer);
     d->buffer = new_buffer;
     d->map_size = new_map_size;
-    d->front_map_idx = new_front_map_idx+1;
-    d->back_map_idx = new_back_map_idx;
+    d->front_map_idx = new_front_map_idx;
+    d->back_map_idx = j;
 }
