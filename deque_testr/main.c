@@ -22,8 +22,7 @@ void celula_free(Celula *c)
     free(c);
 }
 
-void celula_print(void *c)
-{   
+void celula_print(void* c) {
     Celula *cel = (Celula*) c;
     printf("(%d, %d)", cel->x, cel->y);
 }
@@ -43,34 +42,36 @@ int main()
         if (!strcmp(cmd, "PUSH_BACK"))
         {
             scanf("%d %d", &x, &y);
+            printf("PUSH_BACK: %d %d\n", x, y);
             deque_push_back(d, celula_create(x, y));
-            printf("PUSH_BACK: (%d, %d)\n", x, y);
-            print_deque(d, celula_print);
             print_infos_deque(d);
+            print_deque(d, celula_print);
         }
         else if (!strcmp(cmd, "PUSH_FRONT"))
         {
             scanf("%d %d", &x, &y);
-            printf("PUSH_FRONT: (%d, %d)\n", x, y);
+            printf("PUSH_FRONT %d %d\n", x, y);
             deque_push_front(d, celula_create(x, y));
-            print_deque(d, celula_print);
             print_infos_deque(d);
+            print_deque(d, celula_print);
         }
         else if (!strcmp(cmd, "POP_BACK"))
         {
+            printf("POP_BACK\n");
             Celula *c = deque_pop_back(d);
             printf("%d %d\n", c->x, c->y);
-            print_deque(d, celula_print);
-            print_infos_deque(d);
             celula_free(c);
+            print_infos_deque(d);
+            print_deque(d, celula_print);
         }
         else if (!strcmp(cmd, "POP_FRONT"))
         {
+            printf("POP_FRONT\n");
             Celula *c = deque_pop_front(d);
             printf("%d %d\n", c->x, c->y);
-            print_deque(d, celula_print);
-            print_infos_deque(d);
             celula_free(c);
+            print_infos_deque(d);
+            print_deque(d, celula_print);
         }
     }
 
