@@ -47,28 +47,31 @@ void deque_push_back(Deque *d, void *val) {
         d->back_map_idx++;
         
         if (d->back_map_idx == d->map_size) {
-            int new_map_size = d->map_size * 2;
-            data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
-
-            int new_front_map_idx = new_map_size / 4;
-            int new_back_map_idx = new_map_size / 4 + d->map_size;
-
-            for (int i = 0; i < new_map_size; i++) {
-                if (i >= new_front_map_idx && i < new_back_map_idx) {
-                    int old_idx = (i - new_front_map_idx) % d->map_size;
-                    new_buffer[i] = d->buffer[old_idx];
-                } else {
-                    new_buffer[i] = NULL;
-                }
-            }
-
-            free(d->buffer);
-            d->buffer = new_buffer;
-            d->map_size = new_map_size;
-            d->front_map_idx = new_front_map_idx;
-            d->back_map_idx = new_back_map_idx;
+            // realocar buffer
+            deque_realoc_map(d, d->map_size * 2);
         }
     }
+}
+
+void deque_push_front(Deque *d, void *val) {
+    d->front_idx--;
+    
+    if (d->front_idx < 0) {
+        d->front_map_idx--;
+        
+        if (d->front_map_idx < 0) {
+            deque_realoc_map(d, d->map_size * 2);
+        }
+        
+        d->front_idx = BUFFER_SIZE - 1;
+    }
+    if (d->buffer[d->front_map_idx] == NULL) {
+        d->buffer[d->front_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
+        for(int i = 0; i < BUFFER_SIZE; i++) {
+            d->buffer[d->front_map_idx][i] = NULL;
+        }
+    }
+    d->buffer[d->front_map_idx][d->front_idx] = val;
 }
 
 int deque_size(Deque *d) {
@@ -91,46 +94,6 @@ void print_infos_deque(Deque* d) {
     printf("\n");
 }
 
-
-void deque_push_front(Deque *d, void *val) {
-    d->front_idx--;    
-    
-    if (d->front_idx < 0) {
-        d->front_map_idx--;
-        
-        if (d->front_map_idx < 0) {
-            int new_map_size = d->map_size * 2;
-            data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
-            
-            int new_front_map_idx = abs(new_map_size / 4 - d->map_size);
-            int new_back_map_idx = new_map_size / 4 + d->map_size;
-            
-            for (int i = 0; i < new_map_size; i++) {
-                new_buffer[i] = NULL;
-            }
-            for(int i = 0; i < d->map_size; i++) {
-                int new_idx = i + new_front_map_idx;
-                new_buffer[new_idx] = d->buffer[i];
-            }
-
-            free(d->buffer);
-            d->buffer = new_buffer;
-            d->map_size = new_map_size;
-            d->front_map_idx = new_front_map_idx + 1;
-            d->back_map_idx = new_back_map_idx;
-        }
-        
-        d->front_idx = BUFFER_SIZE - 1;
-    }
-    if (d->buffer[d->front_map_idx] == NULL) {
-        d->buffer[d->front_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
-        for(int i = 0; i < BUFFER_SIZE; i++) {
-            d->buffer[d->front_map_idx][i] = NULL;
-        }
-    }
-    d->buffer[d->front_map_idx][d->front_idx] = val;
-}
-
 void* deque_pop_back(Deque *d) {
     d->back_idx--;
     if (d->back_idx < 0) {
@@ -143,6 +106,8 @@ void* deque_pop_back(Deque *d) {
 }
 
 void* deque_pop_front(Deque *d) {
+    printf("front_idx: %d\n", d->front_idx);
+    printf("front_map_idx: %d\n", d->front_map_idx);
     void* val = d->buffer[d->front_map_idx][d->front_idx];
     d->buffer[d->front_map_idx][d->front_idx] = NULL;
     d->front_idx++;
@@ -192,4 +157,30 @@ void deque_destroy(Deque *d) {
     }
     free(d->buffer);
     free(d);
+}
+
+void deque_realoc_map(Deque *d, int new_map_size) {
+    // Novo buffer
+    data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
+    
+    // Novos indices
+    int new_front_map_idx = new_map_size / 4;
+    int new_back_map_idx = new_map_size / 4 + d->map_size;
+    
+    // Inicializa o novo buffer
+    for (int i = 0; i < new_map_size; i++) {
+        new_buffer[i] = NULL;
+    }
+    // Copia os valores do buffer antigo para o novo
+    int i;
+    for(i = 0; i < d->map_size; i++) {
+        int new_idx = i + new_front_map_idx;
+        new_buffer[new_idx] = d->buffer[i];
+    }
+
+    free(d->buffer);
+    d->buffer = new_buffer;
+    d->map_size = new_map_size;
+    d->front_map_idx = new_front_map_idx+1;
+    d->back_map_idx = new_back_map_idx;
 }

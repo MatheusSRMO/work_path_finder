@@ -25,4 +25,6 @@ void *deque_get(Deque *d, int idx);
 void deque_destroy(Deque *d);
 void print_deque(Deque* deque, void (*print)(void*));
 void print_infos_deque(Deque* d);
+void deque_realoc_map(Deque *d, int new_map_size);
+
 #endif
