@@ -37,6 +37,11 @@ int celula_cmp(void *c1, void *c2) {
         return 1;
 }
 
+void celula_print(void* cel) {
+    Celula* c = cel;
+    printf("(%d, %d)", c->x, c->y);
+}
+
 int main() {
     int i, n, x, y, priority;
     char cmd[10];
@@ -45,6 +50,8 @@ int main() {
     Heap *heap = heap_construct(h);
 
     // TODO
+    // heap_push(heap, celula_create(1, 3), 1);
+    
 
     HashTableIterator *it = hash_table_iterator_construct(h);
 
