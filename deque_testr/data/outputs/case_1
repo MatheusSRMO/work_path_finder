@@ -1,0 +1,49 @@
+PUSH_FRONT 13 52
+front_idx: 0
+back_idx: 0
+front_map_idx: 1
+back_map_idx: 2
+map_size: 5
+size: 5
+
+[
+	[NULL, NULL, NULL, NULL, NULL]
+	[(13, 52), NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+]
+POP_FRONT
+DEQUE POP FRONT:
+13 52
+front_idx: 1
+back_idx: 0
+front_map_idx: 1
+back_map_idx: 2
+map_size: 5
+size: 4
+
+[
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+]
+PUSH_BACK: 58 36
+front_idx: 1
+back_idx: 1
+front_map_idx: 1
+back_map_idx: 2
+map_size: 5
+size: 5
+
+[
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[(58, 36), NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+	[NULL, NULL, NULL, NULL, NULL]
+]
+POP_FRONT
+DEQUE POP FRONT:

@@ -22,11 +22,6 @@ void celula_free(Celula *c)
     free(c);
 }
 
-void celula_print(void* c) {
-    Celula *cel = (Celula*) c;
-    printf("(%d, %d)\n", cel->x, cel->y);
-}
-
 int main()
 {
     int i, n, x, y;
@@ -62,7 +57,6 @@ int main()
             celula_free(c);
         }
     }
-    print_deque(d, celula_print);
 
     deque_destroy(d);
     return 0;

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "deque.h": "c",
+        "stdio.h": "c"
+    }
+}

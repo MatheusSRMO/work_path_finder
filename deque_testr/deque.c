@@ -58,6 +58,7 @@ void deque_push_front(Deque *d, void *val) {
     d->front_idx--;
     
     if (d->front_idx < 0) {
+        d->front_idx = BUFFER_SIZE - 1;
         d->front_map_idx--;
         
         if (d->front_map_idx < 0) {
@@ -85,8 +86,8 @@ void* deque_get(Deque *d, int idx) {
 
 void print_infos_deque(Deque* d) {
     printf("front_idx: %d\n", d->front_idx);
-    printf("back_idx: %d\n", d->back_idx);
     printf("front_map_idx: %d\n", d->front_map_idx);
+    printf("back_idx: %d\n", d->back_idx);
     printf("back_map_idx: %d\n", d->back_map_idx);
     printf("map_size: %d\n", d->map_size);
     printf("size: %d\n", deque_size(d));
@@ -118,7 +119,7 @@ void* deque_pop_front(Deque *d) {
 void print_deque(Deque* deque, void (*print)(void*)) {
     printf("[\n");
     for (int i = 0; i < deque->map_size; i++) {
-        printf("\t[");
+        printf("\t%2d [", i);
         for (int j = 0; j < BUFFER_SIZE; j++) {
             if (deque->buffer[i] != NULL && deque->buffer[i][j] != NULL) {
                 print(deque->buffer[i][j]);
@@ -144,12 +145,15 @@ void deque_destroy(Deque *d) {
 }
 
 void deque_realoc_map(Deque *d, int new_map_size) {
+    // printf("Realocando map de %d para %d\n", d->map_size, new_map_size);
     // Novo buffer
     data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
     
     // Novos indices
     int new_front_map_idx = new_map_size / 4 + 1;
     int new_back_map_idx = new_map_size / 4 + d->map_size;
+    // printf("new_front_map_idx: %d\n", new_front_map_idx);
+    // printf("new_back_map_idx: %d\n", new_back_map_idx);
     
     // Inicializa o novo buffer
     for (int i = 0; i < new_map_size; i++) {
@@ -167,4 +171,7 @@ void deque_realoc_map(Deque *d, int new_map_size) {
     d->map_size = new_map_size;
     d->front_map_idx = new_front_map_idx;
     d->back_map_idx = j;
+    // printf("new_front_map_idx: %d\n", d->front_map_idx);
+    // printf("new_back_map_idx: %d\n", d->back_map_idx);
+    // printf("Realocacao concluida\n");
 }
