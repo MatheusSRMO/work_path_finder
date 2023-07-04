@@ -78,6 +78,10 @@ void heap_insert(Heap* h, HeapNode node) {
     }
 }
 
+bool heap_empty(Heap *heap) {
+    return heap->size == 0;
+}
+
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
