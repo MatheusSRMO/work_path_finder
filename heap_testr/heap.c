@@ -64,6 +64,20 @@ void heapify_up(Heap* heap, int i) {
     }
 }
 
+void heap_insert(Heap* h, HeapNode node) {
+
+    // verifica se o heap está vazio
+    if(h->size < h->capacity) {
+        // Insere no array
+        h->nodes[h->size] = node;
+
+        // chama a função para subir o nó
+        heapify_up(h, h->size);
+
+        h->size++;
+    }
+}
+
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
