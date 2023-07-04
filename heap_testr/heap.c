@@ -90,6 +90,10 @@ double heap_max_priority(Heap *heap) {
     return heap->nodes[0].priority;
 }
 
+double heap_min_priority(Heap* heap) {
+    return heap->nodes[heap->size].priority;
+}
+
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
