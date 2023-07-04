@@ -86,6 +86,10 @@ void* heap_max(Heap *heap) {
     return heap->nodes[0].value;
 }
 
+double heap_max_priority(Heap *heap) {
+    return heap->nodes[0].priority;
+}
+
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
