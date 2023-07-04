@@ -17,6 +17,7 @@ void* heap_max(Heap *heap);
 double heap_max_priority(Heap *heap);
 double heap_min_priority(Heap* heap);
 void* heap_pop(Heap *heap);
+void print_heap(Heap* heap, void (*print_fn)(HeapNode));
 void heap_destroy(Heap *heap);
 
 #endif // _HEAP_H_

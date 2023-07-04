@@ -91,10 +91,33 @@ double heap_max_priority(Heap *heap) {
 }
 
 double heap_min_priority(Heap* heap) {
-    return heap->nodes[heap->size].priority;
+    return heap->nodes[heap->size - 1].priority;
+}
+
+void* heap_pop(Heap *heap) {
+    void* deleteItem = NULL;
+
+    // verifica se o heap esta fazio
+    if(heap->size == 0) {
+        printf("Heap is empty.\n");
+        return NULL;
+    }
+
+    deleteItem = heap->nodes[0].value;
+    heap->size--;
+    heap->nodes[0] = heap->nodes[heap->size];
+    heapify(heap, 0);
+    return deleteItem;
 }
 
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
+}
+
+void print_heap(Heap* heap, void (*print_fn)(HeapNode)) {
+    for(int i = 0; i < heap->size; i++) {
+        print_fn(heap->nodes[i]);
+        printf("\n");
+    }
 }

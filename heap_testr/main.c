@@ -44,7 +44,7 @@ int main() {
     HashTable *h = hash_table_construct(19, celula_hash, celula_cmp);
     Heap *heap = heap_construct(h);
 
-    
+    // TODO
 
     HashTableIterator *it = hash_table_iterator_construct(h);
 
