@@ -41,9 +41,30 @@ void heapify(Heap* heap, int i) {
         largest = right;
 
     if (largest != i) {
-        hash_table_set(heap->hash_table, heap->nodes[i].value, largest);
-        hash_table_set(heap->hash_table, heap->nodes[largest].value, i);
+        // hash_table_set(heap->hash_table, heap->nodes[i].value, largest);
+        // hash_table_set(heap->hash_table, heap->nodes[largest].value, i);
         swap(&heap->nodes[i], &heap->nodes[largest]);
         heapify(heap, largest);
     }
+}
+
+void heapify_up(Heap* heap, int i) {
+    // Se o elemento for a raiz, não há nada a fazer
+    int parent = (i - 1) / 2;
+
+    // Se o elemento for maior que o pai, troca os dois
+    if (parent >= 0 && heap->nodes[i].priority > heap->nodes[parent].priority) {
+        // Atualiza a tabela hash com as novas posições dos elementos
+        // hash_table_set(heap->hash_table, heap->nodes[i].value, parent);
+        // hash_table_set(heap->hash_table, heap->nodes[parent].value, i);
+        // Troca os elementos
+        swap(&heap->nodes[i], &heap->nodes[parent]);
+        // Continua a heapify para cima
+        heapify_up(heap, parent);
+    }
+}
+
+void heap_destroy(Heap *heap) {
+    free(heap->nodes);
+    free(heap);
 }
