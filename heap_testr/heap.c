@@ -82,6 +82,10 @@ bool heap_empty(Heap *heap) {
     return heap->size == 0;
 }
 
+void* heap_max(Heap *heap) {
+    return heap->nodes[0].value;
+}
+
 void heap_destroy(Heap *heap) {
     free(heap->nodes);
     free(heap);
