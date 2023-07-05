@@ -39,7 +39,7 @@ int celula_cmp(void *c1, void *c2) {
 
 void celula_print(void* cel) {
     Celula* c = cel;
-    printf("(%d, %d)", c->x, c->y);
+    printf("(%d, %d)\n", c->x, c->y);
 }
 
 int main() {
@@ -50,20 +50,26 @@ int main() {
     Heap *heap = heap_construct(h);
 
     // TODO
-    // heap_push(heap, celula_create(1, 3), 1);
-    
 
-    HashTableIterator *it = hash_table_iterator_construct(h);
+    celula_print(heap_push(heap, celula_create(1, 1), 1, heap_node_compare));
+    celula_print(heap_push(heap, celula_create(2, 2), 2, heap_node_compare));
+    celula_print(heap_push(heap, celula_create(3, 3), 3, heap_node_compare));
+    celula_print(heap_push(heap, celula_create(4, 4), 4, heap_node_compare));
+    celula_print(heap_push(heap, celula_create(5, 5), 5, heap_node_compare));
 
-    while (!hash_table_iterator_is_over(it)) {
-        HashTableItem *item = hash_table_iterator_next(it);
-        Celula *cel = (Celula *)item->key;
-        int *pos = (int *)item->val;
-        celula_destroy(cel);
-        free(pos);
-    }
+    Celula* c1 = heap_pop(heap, heap_node_compare);
+    Celula* c2 = heap_pop(heap, heap_node_compare);
+    Celula* c3 = heap_pop(heap, heap_node_compare);
 
-    hash_table_iterator_destroy(it);
+    celula_print(c1);
+    celula_print(c2);
+    celula_print(c3);
+
+    celula_destroy(c1);
+    celula_destroy(c2);
+    celula_destroy(c3);
+
+
     hash_table_destroy(h);
     heap_destroy(heap);
 
