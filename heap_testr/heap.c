@@ -4,15 +4,14 @@
 #include "hash.h"
 
 struct HeapNode {
-    void* data; // Ponteiro genérico para o dado armazenado
-    double priority; // Prioridade do elemento
+    void* data;            // Ponteiro genérico para o dado armazenado
+    double priority;       // Prioridade do elemento
 };
 
-// Estrutura para representar um heap
 struct Heap {
-    HeapNode* data; // Array de ponteiros genéricos
-    int size;    // Tamanho atual do heap
-    int capacity; // Capacidade máxima do heap
+    HeapNode* data;        // Array de ponteiros genéricos
+    int size;              // Tamanho atual do heap
+    int capacity;          // Capacidade máxima do heap
     HashTable* hash_table; // Tabela de hash para mapear os elementos do heap
 };
 
@@ -34,10 +33,11 @@ void swap(HeapNode* a, HeapNode* b) {
     *b = temp;
 }
 
+// Função auxiliar para comparar dois elementos do heap
 int heap_node_compare(HeapNode a, HeapNode b) {
-    if (a.priority < b.priority) {
+    if (a.priority > b.priority) {
         return -1;
-    } else if (a.priority > b.priority) {
+    } else if (a.priority < b.priority) {
         return 1;
     } else {
         return 0;
@@ -50,11 +50,11 @@ void heapify_down(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
     int right_child = 2 * index + 2;
     int largest = index;
 
-    if (left_child < heap->size && compare(heap->data[left_child], heap->data[largest]) > 0) {
+    if (left_child < heap->size && compare(heap->data[left_child], heap->data[largest]) >= 0) {
         largest = left_child;
     }
 
-    if (right_child < heap->size && compare(heap->data[right_child], heap->data[largest]) > 0) {
+    if (right_child < heap->size && compare(heap->data[right_child], heap->data[largest]) >= 0) {
         largest = right_child;
     }
 
@@ -82,11 +82,6 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
     }
 
     void* del = NULL;
-    del hash_table_get(heap->hash_table, data);
-    if(del != NULL) {
-        hash_table_pop()
-    }
-    hash_table_set(heap->hash_table, data, &priority);
 
     HeapNode node;
     node.data = data;
@@ -95,25 +90,44 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
     heap->data[heap->size] = node;
     heap->size++;
     heapify_up(heap, heap->size - 1, compare);
+
     return del;
 }
 
+// Função para remover um elemento do heap
 void* heap_pop(Heap* heap, int (*compare)(HeapNode, HeapNode)) {
     if (heap->size == 0) {
         printf("O heap está vazio. Não há elementos para remover.\n");
         return NULL;
     }
 
-    HeapNode maxItem = heap->data[0];
+    HeapNode max_item = heap->data[0];
     heap->data[0] = heap->data[heap->size - 1];
     heap->size--;
     heapify_down(heap, 0, compare);
 
-    return maxItem.data;
+    return max_item.data;
 }
 
+// Função para atualizar a prioridade de um elemento do heap
 double heap_min_priority(Heap* heap) {
     return heap->data[0].priority;
+}
+
+void print_heap(Heap* heap, void (*print_node_fn)(HeapNode), void (*print_fn)(void*)) {
+    printf("========================================\n");
+    for(int i = 0; i < heap->size; i++) {
+        printf("Heap[%d]: ", i);
+        print_node_fn(heap->data[i]);
+        printf("Data[%d]: ", i);
+        print_fn(heap->data[i].data);
+        printf("\n");
+    }
+    printf("========================================\n\n");
+}
+
+void print_heap_node(HeapNode node) {
+    printf("Priority: %lf\n", node.priority);
 }
 
 void heap_destroy(Heap *heap) {
