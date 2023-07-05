@@ -45,45 +45,46 @@ int heap_node_compare(HeapNode a, HeapNode b) {
 }
 
 // Função para ajustar o heap para baixo (quando um elemento é removido)
-void heapifyDown(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
-    int leftChild = 2 * index + 1;
-    int rightChild = 2 * index + 2;
+void heapify_down(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
+    int left_child = 2 * index + 1;
+    int right_child = 2 * index + 2;
     int largest = index;
 
-    if (leftChild < heap->size && compare(heap->data[leftChild], heap->data[largest]) > 0) {
-        largest = leftChild;
+    if (left_child < heap->size && compare(heap->data[left_child], heap->data[largest]) > 0) {
+        largest = left_child;
     }
 
-    if (rightChild < heap->size && compare(heap->data[rightChild], heap->data[largest]) > 0) {
-        largest = rightChild;
+    if (right_child < heap->size && compare(heap->data[right_child], heap->data[largest]) > 0) {
+        largest = right_child;
     }
 
     if (largest != index) {
         swap(&heap->data[index], &heap->data[largest]);
-        heapifyDown(heap, largest, compare);
+        heapify_down(heap, largest, compare);
     }
 }
 
 // Função para ajustar o heap para cima (quando um elemento é inserido)
-void heapifyUp(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
+void heapify_up(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
     int parent = (index - 1) / 2;
 
     if (parent >= 0 && compare(heap->data[index], heap->data[parent]) > 0) {
         swap(&heap->data[index], &heap->data[parent]);
-        heapifyUp(heap, parent, compare);
+        heapify_up(heap, parent, compare);
     }
 }
 
 // Função para inserir um elemento no heap
 void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode, HeapNode)) {
     if (heap->size == heap->capacity) {
-        printf("O heap está cheio. Não é possível inserir mais elementos.\n");
-        return NULL;
+        heap->capacity *= 2;
+        heap->data = realloc(heap->data, heap->capacity * sizeof(HeapNode));
     }
 
-    void* del = hash_table_get(heap->hash_table, data);
+    void* del = NULL;
+    del hash_table_get(heap->hash_table, data);
     if(del != NULL) {
-        // Verificar logica
+        hash_table_pop()
     }
     hash_table_set(heap->hash_table, data, &priority);
 
@@ -93,8 +94,8 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
     
     heap->data[heap->size] = node;
     heap->size++;
-    heapifyUp(heap, heap->size - 1, compare);
-    return data;
+    heapify_up(heap, heap->size - 1, compare);
+    return del;
 }
 
 void* heap_pop(Heap* heap, int (*compare)(HeapNode, HeapNode)) {
@@ -106,9 +107,13 @@ void* heap_pop(Heap* heap, int (*compare)(HeapNode, HeapNode)) {
     HeapNode maxItem = heap->data[0];
     heap->data[0] = heap->data[heap->size - 1];
     heap->size--;
-    heapifyDown(heap, 0, compare);
+    heapify_down(heap, 0, compare);
 
     return maxItem.data;
+}
+
+double heap_min_priority(Heap* heap) {
+    return heap->data[0].priority;
 }
 
 void heap_destroy(Heap *heap) {
