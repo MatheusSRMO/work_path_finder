@@ -84,8 +84,7 @@ void heapify_down(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
         smallest = left_child;
     }
 
-    if (right_child < heap->size && compare(heap->data[right_child], heap->data[smallest]) <= 0) {
-    // if (right_child < heap->size) {
+    if (right_child < heap->size && compare(heap->data[right_child], heap->data[smallest]) < 0) {
         smallest = right_child;
     }
 
@@ -112,11 +111,9 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
         heap->data = realloc(heap->data, heap->capacity * sizeof(HeapNode));
     }
 
-
     HeapNode node;
     node.data = data;
     node.priority = priority;
-    
 
     // Verifica se a celula já existe no heap, se sim, atualiza a prioridade e reajusta o heap
     int idx = __heap_data_exists(heap, node, hash_table_get_cmp_fn(heap->hash_table));
@@ -127,15 +124,6 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
         }
         return node.data;
     }
-
-    // Verifica se prioridade já existe no heap, se sim, substitui o elemento e retorna o elemento antigo
-    // void* del = NULL;
-    // idx = __heap_priority_exists(heap, node, compare);
-    // if(idx != -1) {
-    //     del = heap->data[idx].data;
-    //     heap->data[idx] = node;
-    //     return del;
-    // }
 
     // Insere o elemento no heap
     heap->data[heap->size] = node;
