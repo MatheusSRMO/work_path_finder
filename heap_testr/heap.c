@@ -129,13 +129,13 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
     }
 
     // Verifica se prioridade já existe no heap, se sim, substitui o elemento e retorna o elemento antigo
-    void* del = NULL;
-    idx = __heap_priority_exists(heap, node, compare);
-    if(idx != -1) {
-        del = heap->data[idx].data;
-        heap->data[idx] = node;
-        return del;
-    }
+    // void* del = NULL;
+    // idx = __heap_priority_exists(heap, node, compare);
+    // if(idx != -1) {
+    //     del = heap->data[idx].data;
+    //     heap->data[idx] = node;
+    //     return del;
+    // }
 
     // Insere o elemento no heap
     heap->data[heap->size] = node;
