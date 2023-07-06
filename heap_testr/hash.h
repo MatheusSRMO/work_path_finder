@@ -58,6 +58,9 @@ void* hash_table_pop(HashTable *h, void *key);
 // numero de buckets
 int hash_table_size(HashTable *h);
 
+// pegar funcao para comparar duas chaves
+CmpFunction hash_table_get_cmp_fn(HashTable *h);
+
 // numero de elementos inseridos
 int hash_table_num_elems(HashTable *h);
 

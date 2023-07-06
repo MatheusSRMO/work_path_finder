@@ -59,18 +59,19 @@ int main() {
             Celula *cel = celula_create(x, y);
             cel = heap_push(heap, cel, priority, heap_node_compare);
 
-            printf("PUSH: ");
+            printf("PUSH: %d ", priority);
             print_heap(heap, print_heap_node, print_celula);
+
             // se a celula ja existia, lembre-se liberar a memoria alocada para a nova celula
-            // if (cel)
-            //     celula_destroy(cel);
+            if (cel)
+                celula_destroy(cel);
         }
         else if (!strcmp(cmd, "POP")) {
             int priority = heap_min_priority(heap);
             Celula *cel = heap_pop(heap, heap_node_compare);
             printf("%d %d %d\n", cel->x, cel->y, priority);
             celula_destroy(cel);
-            printf("POP: ");
+            printf("POP: %d ", priority);
             print_heap(heap, print_heap_node, print_celula);
         }
     }
