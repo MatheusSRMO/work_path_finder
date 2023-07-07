@@ -4,14 +4,14 @@
 
 #include "labirinto.h"
 
-typedef struct
-{
+typedef struct Celula {
     int x;
     int y;
+    int visited;
+    struct Celula *parent;
 } Celula;
 
-typedef struct
-{
+typedef struct {
     Celula *caminho;
     double custo_caminho;
     int tamanho_caminho;
