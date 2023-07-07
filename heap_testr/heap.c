@@ -47,13 +47,17 @@ int heap_node_compare(HeapNode a, HeapNode b) {
 int __heap_priority_exists(Heap* heap, HeapNode node, int (*compare_priority)(HeapNode, HeapNode)) {
     int contains = -1;
 
-    for(int i = 0; i < heap->size; i++) {
-        if (
-            compare_priority(heap->data[i], node) == 0
-        ) {
-            contains = i;
-            break;
-        }
+    // for(int i = 0; i < heap->size; i++) {
+    //     if (
+    //         compare_priority(heap->data[i], node) == 0
+    //     ) {
+    //         contains = i;
+    //         break;
+    //     }
+    // }
+    int* index = (int*)hash_table_get(heap->hash_table, node.data);
+    if(index != NULL) {
+        contains = *index;
     }
 
     return contains;
@@ -87,8 +91,14 @@ void heapify_down(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
     if (right_child < heap->size && compare(heap->data[right_child], heap->data[smallest]) < 0) {
         smallest = right_child;
     }
-
+    
     if (smallest != index) {
+        // atualizar o índice do elemento na tabela de hash
+        int* hash_idx = (int*)hash_table_get(heap->hash_table, heap->data[index].data);
+        int* hash_smallest_idx = (int*)hash_table_get(heap->hash_table, heap->data[smallest].data);
+        *hash_idx = smallest;
+        *hash_smallest_idx = index;
+
         swap(&heap->data[index], &heap->data[smallest]);
         heapify_down(heap, smallest, compare);
     }
@@ -99,6 +109,12 @@ void heapify_up(Heap* heap, int index, int (*compare)(HeapNode, HeapNode)) {
     int parent = (index - 1) / 2;
 
     if (parent >= 0 && compare(heap->data[index], heap->data[parent]) < 0) {
+        // atualizar o índice do elemento na tabela de hash
+        int* hash_idx = (int*)hash_table_get(heap->hash_table, heap->data[index].data);
+        int* hash_parent_idx = (int*)hash_table_get(heap->hash_table, heap->data[parent].data);
+        *hash_idx = parent;
+        *hash_parent_idx = index;
+        
         swap(&heap->data[index], &heap->data[parent]);
         heapify_up(heap, parent, compare);
     }
@@ -128,6 +144,12 @@ void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode
     // Insere o elemento no heap
     heap->data[heap->size] = node;
     heap->size++;
+
+    // Insere o elemento na tabela de hash
+    int* hash_idx = (int*)malloc(sizeof(int));
+    *hash_idx = heap->size - 1;
+    hash_table_set(heap->hash_table, data, hash_idx);
+
     heapify_up(heap, heap->size - 1, compare);
 
     return NULL;
@@ -139,6 +161,16 @@ void* heap_pop(Heap* heap, int (*compare)(HeapNode, HeapNode)) {
         printf("O heap está vazio. Não há elementos para remover.\n");
         return NULL;
     }
+    else if (heap->size == 1) {
+        int* hash_idx = (int*)hash_table_get(heap->hash_table, heap->data[0].data);
+        *hash_idx = 0;
+    }    
+
+
+    // Remove o elemento da tabela de hash
+    int* hash_idx = (int*)hash_table_get(heap->hash_table, heap->data[0].data);
+    hash_table_pop(heap->hash_table, heap->data[0].data);
+    free(hash_idx);
 
     HeapNode min_item = heap->data[0];
     heap->data[0] = heap->data[heap->size - 1];
