@@ -1,6 +1,7 @@
 
 #include "queue.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 struct Queue {
     void **data;
@@ -44,4 +45,14 @@ void *queue_pop(Queue *queue) {
 void queue_destroy(Queue *queue) {
     free(queue->data);
     free(queue);
+}
+
+void queue_show(Queue *queue, void (*print_fn)(void *)) {
+    printf("[");
+    for(int i = 0; i < queue->size; i++) {
+        print_fn(queue->data[(queue->front + i) % queue->capacity]);
+        if (i < queue->size - 1)
+            printf(", ");
+    }
+    printf("]\n");
 }

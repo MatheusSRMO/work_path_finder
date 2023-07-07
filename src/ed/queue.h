@@ -12,4 +12,6 @@ bool queue_empty(Queue *queue);
 void *queue_pop(Queue *queue);
 void queue_destroy(Queue *queue);
 
+void queue_show(Queue *queue, void (*print_fn)(void *));
+
 #endif
