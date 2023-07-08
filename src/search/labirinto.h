@@ -23,4 +23,6 @@ unsigned char labirinto_obter(Labirinto *l, int linha, int coluna);
 void labirinto_print(Labirinto *l);
 void labirinto_destruir(Labirinto *l);
 
+void _labirinto_print_celula(unsigned char val);
+
 #endif

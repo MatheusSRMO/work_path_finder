@@ -19,6 +19,8 @@
         "deque_1d_dynamic.h": "c",
         "deque_2d.h": "c",
         "queue.h": "c",
-        "check.h": "c"
+        "check.h": "c",
+        "labirinto.h": "c",
+        "circular_array.h": "c"
     }
 }

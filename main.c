@@ -5,26 +5,22 @@
 #include "src/search/labirinto.h"
 #include "src/search/algorithms.h"
 
-void print_result(ResultData *result)
-{
-    if (!result->sucesso)
-    {
+void print_result(ResultData *result) {
+    if (!result->sucesso) {
         printf("IMPOSSIVEL\n");
         return;
     }
 
-    for (int i = 0; i < result->tamanho_caminho; i++)
-        printf("%d %d\n", result->caminho[i].x, result->caminho[i].y);
+    for (int i = result->tamanho_caminho -1; i >= 0; i--)
+        printf("%d %d\n", result->caminho[i].y, result->caminho[i].x);
 
     printf("%.2lf\n", result->custo_caminho);
     printf("%d\n", result->tamanho_caminho);
     printf("%d\n", result->nos_expandidos);
 }
 
-void mostra_caminho(Labirinto *l, ResultData *result, Celula inicio, Celula fim)
-{
-    if (result->sucesso)
-    {
+void mostra_caminho(Labirinto *l, ResultData *result, Celula inicio, Celula fim) {
+    if (result->sucesso) {
         for (int i = 0; i < result->tamanho_caminho; i++)
             labirinto_atribuir(l, result->caminho[i].y, result->caminho[i].x, CAMINHO);
     }
@@ -34,8 +30,7 @@ void mostra_caminho(Labirinto *l, ResultData *result, Celula inicio, Celula fim)
     labirinto_print(l);
 }
 
-int main()
-{
+int main() {
     char arquivo_labirinto[100];
     char algoritmo[100];
     Celula inicio, fim;
@@ -57,8 +52,7 @@ int main()
         result = a_star(lab, inicio, fim);
     else if (!strcmp(algoritmo, "DUMMY"))
         result = dummy_search(lab, inicio, fim);
-    else
-    {
+    else {
         printf("Algoritmo desconhecido: %s\n", algoritmo);
         exit(1);
     }

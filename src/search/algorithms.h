@@ -3,11 +3,11 @@
 #define _ALGORITHMS_H_
 
 #include "labirinto.h"
+#include "../ed/circular_array.h"
 
 typedef struct Celula {
     int x;
     int y;
-    int visited;
     struct Celula *parent;
 } Celula;
 
@@ -26,5 +26,11 @@ ResultData depth_first_search(Labirinto *l, Celula inicio, Celula fim);
 // algoritmo bobo de teste que tenta ir em linha reta do inicio ao fim
 // e retorna impossível se encontrar um obstáculo
 ResultData dummy_search(Labirinto *l, Celula inicio, Celula fim);
+
+Celula* celula_construct(int x, int y, Celula *parent);
+void celula_print(void* celula);
+void celula_destroy(Celula* celula);
+
+Celula** celula_get_neighbors(Labirinto* l, Celula* celula);
 
 #endif
