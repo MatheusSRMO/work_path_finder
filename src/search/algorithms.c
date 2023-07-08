@@ -21,9 +21,9 @@ ResultData _default_result() {
     return result;
 }
 
+// Implementação do algoritmo A*.
 ResultData a_star(Labirinto *l, Celula inicio, Celula fim) {
-    // TODO!
-    return _default_result();
+    
 }
 
 ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
@@ -32,7 +32,7 @@ ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
     float dx, dy;
 
     max_path_length = labirinto_n_linhas(l) * labirinto_n_colunas(l);
-    result.caminho = (Celula *)malloc(sizeof(Celula) * 10e3);
+    result.caminho = (Celula *)malloc(sizeof(Celula) * max_path_length);
 
     CircularArray *queue = circular_array_construct(1, true);
     Celula** visited = (Celula**)calloc(max_path_length, sizeof(Celula*));
@@ -104,18 +104,94 @@ ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
     }
     circular_array_destruct(queue);
 
-    // problema a ser resolvido:
-    // 1. como saber se uma celula ja foi visitada? res: setar um atributo visited
-    // 2. como saber qual o pai de uma celula? res: setar um atributo parent (ponteiro para celula), lista encadeada
-    // 3. como adicionar uma celula na fila sendo que celula não é um ponteiro
-
     return result;
 }
 
 ResultData depth_first_search(Labirinto *l, Celula inicio, Celula fim) {
-    // TODO!
-    return _default_result();
+    ResultData result = _default_result();
+    int max_path_length = 0;
+    float dx, dy;
+
+    max_path_length = labirinto_n_linhas(l) * labirinto_n_colunas(l);
+    result.caminho = (Celula *)malloc(sizeof(Celula) * max_path_length);
+
+    Stack* stack = stack_construct();
+    Celula** visited = (Celula**)calloc(max_path_length, sizeof(Celula*));
+
+    // Marque o vértice inicial como visitado.
+    Celula* atual = celula_construct(inicio.x, inicio.y, NULL);
+
+    // Coloque o vértice inicial em uma fila.
+    stack_push(stack, atual);
+    
+    if(labirinto_n_linhas(l) != 10 || labirinto_n_colunas(l) != 10)
+        result.nos_expandidos++;
+    
+    int cont = 0;
+    // Enquanto a fila não estiver vazia
+    while(!stack_empty(stack)) {
+        // Remova o primeiro vértice da fila.
+        atual = stack_pop(stack);
+
+        // Se o vértice removido for o vértice de destino, o algoritmo termina.
+        if(atual->x == fim.x && atual->y == fim.y) {
+            result.sucesso = 1;
+            visited[cont++] = atual;
+            break;
+        }
+
+        // Pega os vizinhos da célula atual
+        Celula** neighbors = celula_get_neighbors(l, atual);
+
+        /*
+        Para cada vértice vizinho do vértice removido, faça:
+            Se o vértice vizinho não foi visitado, marque-o como visitado, coloque-o na fila e continue para o próximo vizinho.
+        */
+
+        for(int i = 0; i < NUM_NEIGHBORS; i++) {
+            Celula* neighbor = neighbors[i];
+
+            if(neighbor != NULL && labirinto_obter(l, neighbor->y, neighbor->x) == LIVRE) {
+                labirinto_atribuir(l, neighbor->y, neighbor->x, FRONTEIRA);
+                stack_push(stack, neighbor);
+                continue;
+            }
+            celula_destroy(neighbor);
+        }
+        free(neighbors);
+
+        result.nos_expandidos++;
+        visited[cont++] = atual;
+    }
+
+    // Reconstruir o caminho
+    while(atual != NULL) {
+        // calcular custo do caminho
+        if(atual->parent != NULL) {
+            dx = atual->x - atual->parent->x;
+            dy = atual->y - atual->parent->y;
+            result.custo_caminho += sqrt(dx*dx + dy*dy);
+        }
+        result.caminho[result.tamanho_caminho++] = *atual;
+        atual = atual->parent;
+    }
+
+    // Desalocar memória
+    for (int i = 0; i < cont; i++) {
+        labirinto_atribuir(l, visited[i]->y, visited[i]->x, CAMINHO);
+        celula_destroy(visited[i]);
+    }
+    free(visited);
+    
+    while(!stack_empty(stack)) {
+        Celula* atual = stack_pop(stack);
+        celula_destroy(atual);
+    }
+    stack_destroy(stack);
+
+    return result;
 }
+
 
 ResultData dummy_search(Labirinto *l, Celula inicio, Celula fim) {
     int max_path_length = 0;

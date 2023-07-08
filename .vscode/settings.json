@@ -21,6 +21,7 @@
         "queue.h": "c",
         "check.h": "c",
         "labirinto.h": "c",
-        "circular_array.h": "c"
+        "circular_array.h": "c",
+        "algorithms.h": "c"
     }
 }

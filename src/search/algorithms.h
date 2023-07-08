@@ -4,6 +4,7 @@
 
 #include "labirinto.h"
 #include "../ed/circular_array.h"
+#include "../ed/stack.h"
 
 typedef struct Celula {
     int x;
