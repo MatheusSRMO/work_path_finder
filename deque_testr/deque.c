@@ -32,10 +32,7 @@ Deque* deque_create(void) {
 
 void deque_push_back(Deque* d, void* val) {
     if (d->buffer[d->back_map_idx] == NULL) {
-        d->buffer[d->back_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
-        for (int i = 0; i < BUFFER_SIZE; i++) {
-            d->buffer[d->back_map_idx][i] = NULL;
-        }
+        d->buffer[d->back_map_idx] = __deque_alloc_bucket();
     }
 
     d->buffer[d->back_map_idx][d->back_idx] = val;
@@ -47,7 +44,7 @@ void deque_push_back(Deque* d, void* val) {
 
         if (d->back_map_idx == d->map_size) {
             // realocar buffer
-            deque_realoc_map(d, d->map_size * 2);
+            __deque_realoc_map(d, d->map_size * 2);
         }
     }
 }
@@ -60,14 +57,11 @@ void deque_push_front(Deque* d, void* val) {
         d->front_map_idx--;
 
         if (d->front_map_idx < 0) {
-            deque_realoc_map(d, d->map_size * 2);
+            __deque_realoc_map(d, d->map_size * 2);
         }
     }
     if (d->buffer[d->front_map_idx] == NULL) {
-        d->buffer[d->front_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
-        for (int i = 0; i < BUFFER_SIZE; i++) {
-            d->buffer[d->front_map_idx][i] = NULL;
-        }
+        d->buffer[d->front_map_idx] = __deque_alloc_bucket();
     }
     d->buffer[d->front_map_idx][d->front_idx] = val;
 }
@@ -141,47 +135,73 @@ void deque_destroy(Deque* d) {
     free(d);
 }
 
-void deque_realoc_map(Deque* d, int new_map_size) {
-    // printf("Realocando map de %d para %d\n", d->map_size, new_map_size);
-    // Novo buffer
-    data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
+int f(int tam, int front_map_idx, int back_map_idx) {
+    int delta = (tam - abs(front_map_idx - back_map_idx)) / 2;
+    return delta;
+}
 
-    // Novos indices
-    int new_front_map_idx = new_map_size / 4 + 1;
-    int new_back_map_idx = new_map_size / 4 + d->map_size;
-    // printf("new_front_map_idx: %d\n", new_front_map_idx);
-    // printf("new_back_map_idx: %d\n", new_back_map_idx);
+// Centraliza os elementos do deque no meio do buffer
+// Centralizes the elements of the deque in the middle of the buffer
+void __deque_centralize_map(Deque* d) {
+    int tam = d->map_size;
+    int front_map_idx = d->front_map_idx;
+    int back_map_idx = d->back_map_idx;
 
-    // Inicializa o novo buffer
-    for (int i = 0; i < new_map_size; i++) {
-        new_buffer[i] = NULL;
+    int delta = f(tam, front_map_idx, back_map_idx);
+    
+    data_type** new_buffer = calloc(tam, sizeof(data_type*));
+
+    int new_front_map_idx = delta;
+
+    for (int i = front_map_idx; i < back_map_idx; i++) {
+        new_buffer[new_front_map_idx] = d->buffer[i];
+        d->buffer[i] = NULL;
+        new_front_map_idx++;
     }
-    // Copia os valores do buffer antigo para o novo
-    int i, j;
-    for (i = 0, j = new_front_map_idx; i < d->front_map_idx; i++, j++) {
-        int new_idx = j;
-        if (d->buffer[i] != NULL) {
-            new_buffer[new_idx] = d->buffer[i];
-            d->buffer[i] = NULL;
-        }
-    }
-    for (i = d->front_map_idx, j = new_front_map_idx; i < d->map_size; i++, j++) {
-        int new_idx = j;
-        if (d->buffer[i] != NULL) {
-            new_buffer[new_idx] = d->buffer[i];
-            d->buffer[i] = NULL;
-        }
-    }
-    for(i = 0; i < d->map_size; i++) {
-        free(d->buffer[i]);
+    for(int i = 0; i < front_map_idx; i++) {
+        if(d->buffer[i] != NULL)
+        __deque_free_bucket(d->buffer[i]);
     }
 
     free(d->buffer);
     d->buffer = new_buffer;
-    d->map_size = new_map_size;
-    d->front_map_idx = new_front_map_idx;
-    d->back_map_idx = j;
-    // printf("new_front_map_idx: %d\n", d->front_map_idx);
-    // printf("new_back_map_idx: %d\n", d->back_map_idx);
-    // printf("Realocacao concluida\n");
+    d->map_size = tam;
+    d->front_map_idx = delta;
+    d->back_map_idx = new_front_map_idx;    
+}
+
+void __deque_realoc_map(Deque* d, int new_map_size) {
+    // Check if it is necessary to increase the size of the buffer (if the deque is 75% full)
+    if (deque_size(d) >= (d->map_size * BUFFER_SIZE) * 0.75) {
+        // Increase the size of the buffer
+        data_type** new_buffer = realloc(d->buffer, sizeof(data_type*) * new_map_size);
+
+        // If the reallocation fails, handle the error
+        if (new_buffer == NULL) {
+            fprintf(stderr, "Failed to reallocate buffer\n");
+            return;
+        }
+
+        // Update the deque's buffer and map size
+        d->buffer = new_buffer;
+        d->map_size = new_map_size;
+
+        // Centralize the elements
+        __deque_centralize_map(d);
+    } else {
+        // Case it's not necessary, just centralize the elements
+        __deque_centralize_map(d);
+    }
+}
+
+
+data_type* __deque_alloc_bucket() {
+    data_type* bucket = malloc(sizeof(data_type) * BUFFER_SIZE);
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+        bucket[i] = NULL;
+    }
+    return bucket;
+}
+void __deque_free_bucket(data_type* bucket) {
+    free(bucket);
 }

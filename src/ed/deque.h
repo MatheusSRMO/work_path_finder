@@ -2,6 +2,7 @@
 #ifndef _DEQUE_H_
 #define _DEQUE_H_
 
+typedef void* data_type;
 typedef struct Deque Deque;
 
 // criacao do deque
@@ -24,4 +25,10 @@ void *deque_get(Deque *d, int idx);
 // libera o espaco alocado para o deque
 void deque_destroy(Deque *d);
 void print_deque(Deque* deque, void (*print)(void*));
+void print_infos_deque(Deque* d);
+void __deque_realoc_map(Deque *d, int new_map_size);
+data_type* __deque_alloc_bucket();
+void __deque_free_bucket(data_type* bucket);
+void __deque_centralize_map(Deque* d);
+
 #endif

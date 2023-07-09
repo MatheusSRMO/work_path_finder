@@ -153,20 +153,21 @@ ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
     max_path_length = labirinto_n_linhas(l) * labirinto_n_colunas(l);
     result.caminho = (Celula *)malloc(sizeof(Celula) * max_path_length);
 
-    CircularArray *queue = circular_array_construct(1, true);
     Celula** visited = (Celula**)calloc(max_path_length, sizeof(Celula*));
+
+    Queue *queue = queue_construct();
 
     // Marque o vértice inicial como visitado.
     Celula* atual = celula_construct(inicio.x, inicio.y, NULL);
 
     // Coloque o vértice inicial em uma fila.
-    circular_array_push(queue, atual);
+    queue_push(queue, atual);
 
     // Enquanto a fila não estiver vazia
     int cont = 0;
-    while(!circular_array_is_empty(queue)) {
+    while(!queue_empty(queue)) {
         // Remova o primeiro vértice da fila.
-        atual = circular_array_pop(queue);
+        atual = queue_pop(queue);
 
         // Se o vértice removido for o vértice de destino, o algoritmo termina.
         if(atual->x == fim.x && atual->y == fim.y) {
@@ -188,7 +189,7 @@ ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
 
             if(neighbor != NULL && labirinto_obter(l, neighbor->y, neighbor->x) == LIVRE) {
                 labirinto_atribuir(l, neighbor->y, neighbor->x, FRONTEIRA);
-                circular_array_push(queue, neighbor);
+                queue_push(queue, neighbor);
                 continue;
             }
             celula_destroy(neighbor);
@@ -217,11 +218,11 @@ ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
     }
     free(visited);
     
-    while(!circular_array_is_empty(queue)) {
-        Celula* atual = circular_array_pop(queue);
+    while(!queue_empty(queue)) {
+        Celula* atual = queue_pop(queue);
         celula_destroy(atual);
     }
-    circular_array_destruct(queue);
+    queue_destroy(queue);
 
     return result;
 }

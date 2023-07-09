@@ -3,7 +3,7 @@
 #define _ALGORITHMS_H_
 
 #include "labirinto.h"
-#include "../ed/circular_array.h"
+#include "../ed/queue.h"
 #include "../ed/stack.h"
 #include "../ed/heap.h"
 

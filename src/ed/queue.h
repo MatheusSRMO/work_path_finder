@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include "types.h"
+#include "deque.h"
 
 typedef struct Queue Queue;
 
