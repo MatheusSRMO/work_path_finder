@@ -13,7 +13,8 @@ typedef struct HeapNode HeapNode;
 // a funcao de comparacao para o heap está dentro da hash table
 Heap* heap_construct(HashTable* hash_table);
 void* heap_push(Heap *heap, void *data, double priority, int (*compare)(HeapNode, HeapNode));
-bool heap_empty(Heap *heap);
+bool heap_is_empty(Heap *heap);
+int heap_size(Heap *heap);
 void* heap_max(Heap *heap);
 double heap_max_priority(Heap *heap);
 double heap_min_priority(Heap* heap);

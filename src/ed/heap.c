@@ -185,6 +185,15 @@ double heap_min_priority(Heap* heap) {
     return heap->data[0].priority;
 }
 
+// Função para obter o tamanho do heap
+bool heap_is_empty(Heap *heap) {
+    return heap->size == 0;
+}
+
+int heap_size(Heap *heap) {
+    return heap->size;
+}
+
 void print_heap(Heap* heap, void (*print_node_fn)(HeapNode), void (*print_fn)(void*)) {
     printf("\n[");
     for(int i = 0; i < heap->size; i++) {

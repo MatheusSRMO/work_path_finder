@@ -21,9 +21,128 @@ ResultData _default_result() {
     return result;
 }
 
+double euclidean_distance(Celula a, Celula b) {
+    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2));
+}
+
+double find_path_cost(Celula* final) {
+    double custo = 0;
+
+    while (final->parent != NULL) {
+        custo += euclidean_distance(*final, *(final->parent));
+        final = final->parent;
+    }
+
+    return custo;
+}
+
+int celula_hash(HashTable *h, void *key) {
+    Celula *c = (Celula *)key;
+    // 83 e 97 sao primos e o operador "^" é o XOR bit a bit
+    return ((c->x * 83) ^ (c->y * 97)) % hash_table_size(h);
+}
+
+int celula_cmp(void *c1, void *c2) {
+    Celula *a = (Celula *)c1;
+    Celula *b = (Celula *)c2;
+
+    if (a->x == b->x && a->y == b->y)
+        return 0;
+    else
+        return 1;
+}
+
+double f(Celula *c) {
+    return c->g + c->h;
+}
+
 // Implementação do algoritmo A*.
 ResultData a_star(Labirinto *l, Celula inicio, Celula fim) {
-    
+    ResultData result = _default_result();
+    int max_path_length = labirinto_n_colunas(l) * labirinto_n_linhas(l);
+    float dx, dy;
+
+    result.caminho = (Celula *)malloc(sizeof(Celula) * max_path_length);
+
+    // Inicialize a heap vazia e insira o nó inicial com uma pontuação f(n) de 0.
+    HashTable* hash = hash_table_construct(max_path_length, celula_hash, celula_cmp);
+    Heap* heap = heap_construct(hash);
+
+    // Marque o vértice inicial como visitado.
+    Celula* atual = celula_construct(inicio.x, inicio.y, NULL);
+    atual->g = 0;
+
+    // Coloque o vértice inicial na heap.
+    heap_push(heap, atual, 0, heap_node_compare);
+
+    Celula** visited = (Celula**)malloc(sizeof(Celula*) * max_path_length);
+
+    // Enquanto a heap não estiver vazia
+    int cont = 0;
+    while(!heap_is_empty(heap)) {
+        // Remova o primeiro vértice da heap.
+        atual = heap_pop(heap, heap_node_compare);
+        result.nos_expandidos++;
+
+        // Se o vértice removido for o vértice de destino, o algoritmo termina.
+        if(atual->x == fim.x && atual->y == fim.y) {
+            result.sucesso = 1;
+            visited[cont++] = atual;
+            break;
+        }
+
+        // Para cada vértice adjacente ao vértice removido
+        Celula** neighbors = celula_get_neighbors(l, atual);
+        for(int i = 0; i < NUM_NEIGHBORS; i++) {
+            Celula* neighbor = neighbors[i];
+
+            // Se o vértice adjacente não foi visitado
+            if(
+                neighbor != NULL
+                && hash_table_get(hash, neighbor) == NULL
+                && labirinto_obter(l, neighbor->y, neighbor->x) == LIVRE
+            ) {
+                labirinto_atribuir(l, neighbor->y, neighbor->x, FRONTEIRA);
+                // Marque o vértice adjacente como visitado.
+                neighbor->g = find_path_cost(neighbor);
+                neighbor->h = euclidean_distance(*neighbor, fim);
+
+                // Coloque o vértice adjacente na heap.
+                heap_push(heap, neighbor, f(neighbor), heap_node_compare);
+
+                continue;
+            }
+            celula_destroy(neighbor);
+        }
+        free(neighbors);
+
+        visited[cont++] = atual;
+    }
+    printf("Nos expandidos: %d\n", result.nos_expandidos + heap_size(heap));
+
+    // Reconstruir o caminho
+    while(atual != NULL) {
+        // calcular custo do caminho
+        if(atual->parent != NULL) {
+            dx = atual->x - atual->parent->x;
+            dy = atual->y - atual->parent->y;
+            result.custo_caminho += sqrt(dx*dx + dy*dy);
+        }
+        result.caminho[result.tamanho_caminho++] = *atual;
+        atual = atual->parent;
+    }
+
+    // Libere a memória alocada.
+    for(int i = 0; i < cont; i++)
+        free(visited[i]);
+    free(visited);
+
+    while(!heap_is_empty(heap))
+        free(heap_pop(heap, heap_node_compare));
+
+    hash_table_destroy(hash);
+    heap_destroy(heap);
+    return result;
 }
 
 ResultData breadth_first_search(Labirinto *l, Celula inicio, Celula fim) {
@@ -192,7 +311,6 @@ ResultData depth_first_search(Labirinto *l, Celula inicio, Celula fim) {
     return result;
 }
 
-
 ResultData dummy_search(Labirinto *l, Celula inicio, Celula fim) {
     int max_path_length = 0;
     float dx, dy;
@@ -246,6 +364,8 @@ Celula* celula_construct(int x, int y, Celula* parent) {
 
     c->x = x;
     c->y = y;
+    c->g = 0;
+    c->h = 0;
     c->parent = parent;
 
     return c;
@@ -294,4 +414,3 @@ Celula** celula_get_neighbors(Labirinto* l, Celula* celula) {
 
     return neighbors;
 }
-

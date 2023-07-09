@@ -5,10 +5,13 @@
 #include "labirinto.h"
 #include "../ed/circular_array.h"
 #include "../ed/stack.h"
+#include "../ed/heap.h"
 
 typedef struct Celula {
     int x;
     int y;
+    double g;
+    double h;
     struct Celula *parent;
 } Celula;
 
