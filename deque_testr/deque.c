@@ -7,7 +7,6 @@
 
 typedef void* data_type;
 
-
 struct Deque {
     data_type** buffer;
     int front_idx;
@@ -20,7 +19,7 @@ struct Deque {
 Deque* deque_create(void) {
     Deque* deque = malloc(sizeof(Deque));
     deque->buffer = malloc(sizeof(data_type*) * INITIAL_MAP_SIZE);
-    for(int i = 0; i < INITIAL_MAP_SIZE; i++) {
+    for (int i = 0; i < INITIAL_MAP_SIZE; i++) {
         deque->buffer[i] = NULL;
     }
     deque->front_idx = 0;
@@ -31,11 +30,10 @@ Deque* deque_create(void) {
     return deque;
 }
 
-// adiciona um item no final do deque, 
-void deque_push_back(Deque *d, void *val) {
+void deque_push_back(Deque* d, void* val) {
     if (d->buffer[d->back_map_idx] == NULL) {
         d->buffer[d->back_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
-        for(int i = 0; i < BUFFER_SIZE; i++) {
+        for (int i = 0; i < BUFFER_SIZE; i++) {
             d->buffer[d->back_map_idx][i] = NULL;
         }
     }
@@ -46,7 +44,7 @@ void deque_push_back(Deque *d, void *val) {
     if (d->back_idx == BUFFER_SIZE) {
         d->back_idx = 0;
         d->back_map_idx++;
-        
+
         if (d->back_map_idx == d->map_size) {
             // realocar buffer
             deque_realoc_map(d, d->map_size * 2);
@@ -54,31 +52,31 @@ void deque_push_back(Deque *d, void *val) {
     }
 }
 
-void deque_push_front(Deque *d, void *val) {
+void deque_push_front(Deque* d, void* val) {
     d->front_idx--;
-    
+
     if (d->front_idx < 0) {
         d->front_idx = BUFFER_SIZE - 1;
         d->front_map_idx--;
-        
+
         if (d->front_map_idx < 0) {
             deque_realoc_map(d, d->map_size * 2);
         }
     }
     if (d->buffer[d->front_map_idx] == NULL) {
         d->buffer[d->front_map_idx] = malloc(sizeof(data_type) * BUFFER_SIZE);
-        for(int i = 0; i < BUFFER_SIZE; i++) {
+        for (int i = 0; i < BUFFER_SIZE; i++) {
             d->buffer[d->front_map_idx][i] = NULL;
         }
     }
     d->buffer[d->front_map_idx][d->front_idx] = val;
 }
 
-int deque_size(Deque *d) {
+int deque_size(Deque* d) {
     return (d->back_map_idx - d->front_map_idx) * BUFFER_SIZE + d->back_idx - d->front_idx;
 }
 
-void* deque_get(Deque *d, int idx) {
+void* deque_get(Deque* d, int idx) {
     int map_idx = idx / BUFFER_SIZE + d->front_map_idx;
     int buffer_idx = idx % BUFFER_SIZE + d->front_idx;
     return d->buffer[map_idx][buffer_idx];
@@ -94,7 +92,7 @@ void print_infos_deque(Deque* d) {
     printf("\n");
 }
 
-void* deque_pop_back(Deque *d) {
+void* deque_pop_back(Deque* d) {
     d->back_idx--;
     if (d->back_idx < 0) {
         d->back_map_idx--;
@@ -105,7 +103,7 @@ void* deque_pop_back(Deque *d) {
     return val;
 }
 
-void* deque_pop_front(Deque *d) {
+void* deque_pop_front(Deque* d) {
     void* val = d->buffer[d->front_map_idx][d->front_idx];
     d->buffer[d->front_map_idx][d->front_idx] = NULL;
     d->front_idx++;
@@ -126,7 +124,7 @@ void print_deque(Deque* deque, void (*print)(void*)) {
             } else {
                 printf("NULL");
             }
-            if(j != BUFFER_SIZE - 1)
+            if (j != BUFFER_SIZE - 1)
                 printf(", ");
         }
         printf("]\n");
@@ -134,36 +132,48 @@ void print_deque(Deque* deque, void (*print)(void*)) {
     printf("]\n");
 }
 
-void deque_destroy(Deque *d) {
-    for(int i = 0; i < d->map_size; i++) {
-        if(d->buffer[i] != NULL) {
+void deque_destroy(Deque* d) {
+    for (int i = 0; i < d->map_size; i++)
+        if (d->buffer[i] != NULL)
             free(d->buffer[i]);
-        }
-    }
+
     free(d->buffer);
     free(d);
 }
 
-void deque_realoc_map(Deque *d, int new_map_size) {
+void deque_realoc_map(Deque* d, int new_map_size) {
     // printf("Realocando map de %d para %d\n", d->map_size, new_map_size);
     // Novo buffer
     data_type** new_buffer = malloc(sizeof(data_type*) * new_map_size);
-    
+
     // Novos indices
     int new_front_map_idx = new_map_size / 4 + 1;
     int new_back_map_idx = new_map_size / 4 + d->map_size;
     // printf("new_front_map_idx: %d\n", new_front_map_idx);
     // printf("new_back_map_idx: %d\n", new_back_map_idx);
-    
+
     // Inicializa o novo buffer
     for (int i = 0; i < new_map_size; i++) {
         new_buffer[i] = NULL;
     }
     // Copia os valores do buffer antigo para o novo
     int i, j;
-    for(i = d->front_map_idx, j = new_front_map_idx; i < d->map_size; i++, j++) {
+    for (i = 0, j = new_front_map_idx; i < d->front_map_idx; i++, j++) {
         int new_idx = j;
-        new_buffer[new_idx] = d->buffer[i];
+        if (d->buffer[i] != NULL) {
+            new_buffer[new_idx] = d->buffer[i];
+            d->buffer[i] = NULL;
+        }
+    }
+    for (i = d->front_map_idx, j = new_front_map_idx; i < d->map_size; i++, j++) {
+        int new_idx = j;
+        if (d->buffer[i] != NULL) {
+            new_buffer[new_idx] = d->buffer[i];
+            d->buffer[i] = NULL;
+        }
+    }
+    for(i = 0; i < d->map_size; i++) {
+        free(d->buffer[i]);
     }
 
     free(d->buffer);
